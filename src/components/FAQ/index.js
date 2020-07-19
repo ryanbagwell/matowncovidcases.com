@@ -47,6 +47,20 @@ export default () => (
     </Accordion>
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h6">
+          Why does your chart show a negative number for my town?
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Typography>
+          The total state-reported cases for the previous week was likely
+          revised, resulting a number of cases removed from that town's
+          aggregate.
+        </Typography>
+      </AccordionDetails>
+    </Accordion>
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6"> Can I see your code?</Typography>
       </AccordionSummary>
       <AccordionDetails>
