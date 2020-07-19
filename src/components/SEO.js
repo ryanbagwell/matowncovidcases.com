@@ -5,7 +5,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import VirusIcon from "../images/virus-outline.png"
 
 function SEO({ description, lang, meta, title }) {
-  const { site } = useStaticQuery(
+  const { site, image } = useStaticQuery(
     graphql`
       query {
         site {
@@ -15,9 +15,20 @@ function SEO({ description, lang, meta, title }) {
             author
           }
         }
+        image: file(relativePath: { eq: "coronavirus.png" }) {
+          childImageSharp {
+            # Specify the image processing specifications right in the query.
+            # Makes it trivial to update as your page's design changes.
+            fixed(width: 300, height: 157) {
+              ...GatsbyImageSharpFixed
+            }
+          }
+        }
       }
     `
   )
+
+  console.log(image)
 
   const metaDescription = description || site.siteMetadata.description
 
@@ -51,15 +62,15 @@ function SEO({ description, lang, meta, title }) {
         },
         {
           name: `twitter:creator`,
-          content: site.siteMetadata.author,
+          content: "@ryanbagwell",
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: site.siteMetadata.title,
         },
         {
           name: `twitter:image`,
-          content: VirusIcon,
+          content: image.childImageSharp.fixed.src,
         },
         {
           name: `twitter:description`,
