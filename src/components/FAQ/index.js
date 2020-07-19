@@ -76,5 +76,15 @@ export default () => (
         </Typography>
       </AccordionDetails>
     </Accordion>
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h6">More questions?</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Typography>
+          <a href="mailto:ryan@ryanbagwell.com">Email me</a>.
+        </Typography>
+      </AccordionDetails>
+    </Accordion>
   </>
 )
