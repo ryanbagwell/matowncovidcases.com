@@ -48,14 +48,17 @@ export default () => (
     <Accordion>
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography variant="h6">
-          Why does your chart show a negative number for my town?
+          Why does your chart show a negative number for a particular week?
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
         <Typography>
-          The total state-reported cases for the previous week was likely
-          revised, resulting a number of cases removed from that town's
-          aggregate.
+          This might happen when a net decrease is made to the total number of
+          cases in a town for a particular week, likely due to an error or
+          revision to the state's data. To put it plainly, if there are no new
+          cases reported in a town for a particuar week, and the state also
+          discovers that one of the previously reported cases actually belongs
+          in another town, a net decrease would appear for that week.
         </Typography>
       </AccordionDetails>
     </Accordion>
