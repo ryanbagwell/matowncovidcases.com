@@ -2,7 +2,6 @@ import React from "react"
 import PropTypes from "prop-types"
 import { Helmet } from "react-helmet"
 import { useStaticQuery, graphql } from "gatsby"
-import VirusIcon from "../images/virus-outline.png"
 
 function SEO({ description, lang, meta, title }) {
   const { site, image } = useStaticQuery(
@@ -28,8 +27,6 @@ function SEO({ description, lang, meta, title }) {
     `
   )
 
-  console.log(image)
-
   const metaDescription = description || site.siteMetadata.description
 
   return (
@@ -51,6 +48,10 @@ function SEO({ description, lang, meta, title }) {
         {
           property: `og:description`,
           content: metaDescription,
+        },
+        {
+          property: `og:image`,
+          content: image.childImageSharp.fixed.src,
         },
         {
           property: `og:type`,
