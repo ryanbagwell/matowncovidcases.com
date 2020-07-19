@@ -70,7 +70,7 @@ export default () => (
         <Typography>
           Absolutely! Click{" "}
           <a
-            href="https://github.com/ryanbagwell/mass-covid-cases-by-town/network/alerts"
+            href="https://github.com/ryanbagwell/mass-covid-cases-by-town/"
             target="_blank"
           >
             here
