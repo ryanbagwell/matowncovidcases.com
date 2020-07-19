@@ -40,12 +40,15 @@ export default observer(props => {
     counts = Object.entries(counts)
       .map(([date, count]) => {
         return {
-          date: moment(date.slice(1).replace(/_/g, "-")).format("M/D"),
+          date: moment(date.slice(1).replace(/_/g, "-"), "MM-DD-YYYY").format(
+            "M/D"
+          ),
           count,
         }
       })
       .sort((a, b) => {
-        return moment(a.date).unix() - moment(b.date).unix()
+        const format = "MM/DD/YYYY"
+        return moment(a.date, format).unix() - moment(b.date, format).unix()
       })
 
     return {
