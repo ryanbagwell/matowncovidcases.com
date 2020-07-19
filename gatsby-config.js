@@ -38,5 +38,11 @@ module.exports = {
         icon: `src/images/virus-outline.png`,
       },
     },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: "UA-105077064-2",
+      },
+    },
   ],
 }
