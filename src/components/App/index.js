@@ -79,7 +79,7 @@ export default observer(props => {
           <SearchBox />
         </Grid>
         <Grid item xs="12">
-          {Chart && <Chart />}
+          {Chart ? <Chart /> : <div style={{ height: "75vh" }} />}
         </Grid>
         <Grid
           item

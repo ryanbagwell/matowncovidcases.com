@@ -1,6 +1,6 @@
+import "fontsource-roboto"
 import React from "react"
 import SEO from "../components/SEO"
-import "fontsource-roboto"
 import App from "../components/App"
 import { GlobalStoreProvider } from "../stores/global"
 
