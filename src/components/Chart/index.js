@@ -18,13 +18,7 @@ export default observer(props => {
 
     return {
       name,
-      data: townData.counts
-        .map(c => c.count)
-        .reduce((final, current, i, src) => {
-          if (i === 0) return final
-          final.push(src[i] - src[i - 1])
-          return final
-        }, []),
+      data: townData.weeklyNewCases.map(x => x.value),
     }
   })
 

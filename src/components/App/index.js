@@ -7,6 +7,8 @@ import moment from "moment"
 import Header from "../Header"
 import Grid from "@material-ui/core/Grid"
 import FAQ from "../FAQ"
+import { ma } from "moving-averages"
+import calculateCountChange from "../../utils/calculateCountChange"
 
 export default observer(props => {
   const store = useStore()
@@ -43,7 +45,7 @@ export default observer(props => {
           date: moment(date.slice(1).replace(/_/g, "-"), "MM-DD-YYYY").format(
             "M/D"
           ),
-          count,
+          value: parseInt(count),
         }
       })
       .sort((a, b) => {
@@ -51,10 +53,38 @@ export default observer(props => {
         return moment(a.date, format).unix() - moment(b.date, format).unix()
       })
 
+    const weeklyNewCases = counts.reduce((final, current, i, src) => {
+      if (i === 0) return final
+      return [
+        ...final,
+        {
+          date: current.date,
+          value: src[i].value - src[i - 1].value,
+        },
+      ]
+    }, [])
+
+    const weeklyNewCaseChange = weeklyNewCases.reduce(
+      (final, current, i, src) => {
+        if (i === 0) return final
+        return [
+          ...final,
+          {
+            date: current.date,
+            value: src[i].value - src[i - 1].value,
+          },
+        ]
+      },
+      []
+    )
+
     return {
       name: node.City_Town,
       id: node.id,
       counts: counts,
+      weeklyNewCases,
+      weeklyNewCaseChange,
+      newCaseChangeMovingAverage: ma(weeklyNewCaseChange.map(c => c.value)),
     }
   })
 
