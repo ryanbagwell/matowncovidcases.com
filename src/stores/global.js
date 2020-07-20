@@ -3,6 +3,10 @@ import React from "react"
 import { observable, action, decorate } from "mobx"
 import { useLocalStore } from "mobx-react"
 
+const updateUrlHash = (towns = []) => {
+  history.pushState(null, null, `/#${towns.join(",")}`)
+}
+
 class GlobalStore {
   townCounts = []
 
@@ -30,12 +34,13 @@ class GlobalStore {
     }
 
     if (typeof window !== "undefined") {
-      history.pushState(null, null, `/#${this.selectedTowns.join(",")}`)
+      updateUrlHash(this.selectedTowns)
     }
   }
 
   removeSelectedTown = name => {
     this.selectedTowns = this.selectedTowns.filter(n => n !== name)
+    updateUrlHash(this.selectedTowns)
   }
 }
 
