@@ -123,7 +123,7 @@ export default observer(props => {
         <Grid item xs="12">
           {Chart ? <Chart /> : <div style={{ height: "75vh" }} />}
         </Grid>
-        {/* <Grid item sx="12">
+        {/* <Grid item container sx="12">
           <ShrinkingAndGrowing />
         </Grid> */}
         <Grid
