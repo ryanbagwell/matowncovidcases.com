@@ -8,7 +8,7 @@ import Header from "../Header"
 import Grid from "@material-ui/core/Grid"
 import FAQ from "../FAQ"
 import { ma } from "moving-averages"
-import calculateCountChange from "../../utils/calculateCountChange"
+//import ShrinkingAndGrowing from "../ShrinkingAndGrowing"
 
 export default observer(props => {
   const store = useStore()
@@ -27,6 +27,10 @@ export default observer(props => {
             _7_15_2020
             _7_1_2020
             _7_8_2020
+            _5_6_2020
+            _5_27_2020
+            _5_20_2020
+            _5_13_2020
             id
           }
         }
@@ -84,7 +88,12 @@ export default observer(props => {
       counts: counts,
       weeklyNewCases,
       weeklyNewCaseChange,
-      newCaseChangeMovingAverage: ma(weeklyNewCaseChange.map(c => c.value)),
+      newCaseChangeMovingAverage: ma(
+        weeklyNewCaseChange.map(c => c.value),
+        3
+      )
+        .slice(-1)
+        .pop(),
     }
   })
 
@@ -114,6 +123,9 @@ export default observer(props => {
         <Grid item xs="12">
           {Chart ? <Chart /> : <div style={{ height: "75vh" }} />}
         </Grid>
+        {/* <Grid item sx="12">
+          <ShrinkingAndGrowing />
+        </Grid> */}
         <Grid
           item
           xs="12"
