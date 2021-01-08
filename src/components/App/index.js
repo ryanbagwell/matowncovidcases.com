@@ -37,7 +37,7 @@ export default observer(props => {
       .map(([date, count]) => {
         return {
           date: moment(date.slice(1).replace(/_/g, "-"), "MM-DD-YYYY").format(
-            "M/D"
+            "M/D/YYYY"
           ),
           value: parseInt(count),
         }
