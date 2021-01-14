@@ -51,7 +51,7 @@ function SEO({ description, lang, meta, title }) {
         },
         {
           property: `og:image`,
-          content: image.childImageSharp.fixed.src,
+          content: `https://www.matowncovidcases.com${image.childImageSharp.fixed.src}`,
         },
         {
           property: `og:type`,
@@ -71,7 +71,7 @@ function SEO({ description, lang, meta, title }) {
         },
         {
           name: `twitter:image`,
-          content: image.childImageSharp.fixed.src,
+          content: `https://www.matowncovidcases.com${image.childImageSharp.fixed.src}`,
         },
         {
           name: `twitter:description`,
