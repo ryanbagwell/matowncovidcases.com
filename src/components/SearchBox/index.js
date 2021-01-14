@@ -24,8 +24,8 @@ export default observer(props => {
 
   return (
     <>
-      <Grid container spacing="2">
-        <Grid item xs="12" sm="5" md="3">
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={5} md={3}>
           <Autocomplete
             autoHighlight={true}
             options={townNames.filter(n => selectedTowns.indexOf(n) === -1)}
@@ -47,9 +47,9 @@ export default observer(props => {
         </Grid>
         <Grid
           item
-          xs="12"
-          sm="7"
-          md="9"
+          xs={12}
+          sm={7}
+          md={9}
           style={{
             display: "flex",
             alignItems: "center",
@@ -59,6 +59,7 @@ export default observer(props => {
           {selectedTowns.map(name => {
             return (
               <Chip
+                key={name}
                 label={name}
                 onDelete={e => {
                   removeSelectedTown(name)
@@ -73,8 +74,8 @@ export default observer(props => {
           })}
         </Grid>
       </Grid>
-      <Grid container spacing="2">
-        <Grid item xs="12" sm="5" md="3">
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={5} md={3}>
           <FormControl
             variant="outlined"
             style={{

@@ -24,7 +24,6 @@ class GlobalStore {
 
   setTownCounts = (counts = []) => {
     this.townCounts = counts.reduce((final, current) => {
-      console.log(current)
       final[current.town] = current
       return final
     }, {})

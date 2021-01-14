@@ -52,22 +52,19 @@ export default observer(props => {
 
   return (
     <>
-      <Grid container spacing="2" style={{ padding: 20 }}>
-        <Grid item xs="12">
+      <Grid container spacing={2} style={{ padding: 20 }}>
+        <Grid item xs={12}>
           <Header />
         </Grid>
-        <Grid item xs="12">
+        <Grid item xs={12}>
           <SearchBox />
         </Grid>
-        <Grid item xs="12">
+        <Grid item xs={12}>
           {Chart ? <Chart /> : <div style={{ height: "75vh" }} />}
         </Grid>
-        {/* <Grid item container sx="12">
-          <ShrinkingAndGrowing />
-        </Grid> */}
         <Grid
           item
-          xs="12"
+          xs={12}
           style={{
             marginTop: 50,
           }}
