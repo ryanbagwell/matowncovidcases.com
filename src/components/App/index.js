@@ -23,6 +23,7 @@ export default observer(props => {
               totalCount
               changePer100k
               changeSinceLastCount
+              twoCountAverageChange
             }
           }
         }

@@ -62,21 +62,21 @@ async function onCreateNode({
     /*
      *  Add the count over count change and other data
      */
-    counts = counts.map((count, i) => {
+    counts.map((count, i) => {
       if (i === 0) {
-        return {
-          ...count,
-          changeSinceLastCount: 0,
-        }
+        count.changeSinceLastCount = 0
+        return
       }
 
       const change = count.totalCount - counts[i - 1].totalCount
 
-      return {
+      counts[i] = {
         ...count,
         changeSinceLastCount: change,
         changePer100k: Math.round((change * 100000) / populations[townName]),
-        twoCountAverage: (count.totalCount + counts[i - 1]) / 2,
+        twoCountAverageChange: Math.round(
+          (change + counts[i - 1].changeSinceLastCount) / 2
+        ),
       }
     })
 

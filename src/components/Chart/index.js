@@ -24,9 +24,19 @@ export default observer(props => {
     return {
       name,
       data: townData.counts.map(x => {
-        return selectedDataType === "raw"
-          ? x.changeSinceLastCount
-          : x.changePer100k
+        switch (selectedDataType) {
+          case "raw":
+            return x.changeSinceLastCount
+            break
+          case "normalized":
+            return x.changePer100k
+            break
+          case "two-week-average":
+            return x.twoCountAverageChange
+            break
+          default:
+            return x.changeSinceLastCount
+        }
       }),
     }
   })

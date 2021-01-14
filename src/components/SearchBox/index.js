@@ -101,6 +101,7 @@ export default observer(props => {
               <MenuItem value="normalized">
                 New Cases per 100k residents
               </MenuItem>
+              <MenuItem value="two-week-average">Two-week average</MenuItem>
             </Select>
           </FormControl>
         </Grid>
