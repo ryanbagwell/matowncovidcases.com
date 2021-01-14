@@ -21,23 +21,25 @@ export default observer(props => {
   const series = selectedTowns.map(name => {
     const townData = getTownData(name)
 
+    const counts = townData.counts.map(x => {
+      switch (selectedDataType) {
+        case "raw":
+          return x.changeSinceLastCount
+          break
+        case "normalized":
+          return x.changePer100k
+          break
+        case "two-week-average":
+          return x.twoCountAverageChange
+          break
+        default:
+          return x.changeSinceLastCount
+      }
+    })
+
     return {
       name,
-      data: townData.counts.map(x => {
-        switch (selectedDataType) {
-          case "raw":
-            return x.changeSinceLastCount
-            break
-          case "normalized":
-            return x.changePer100k
-            break
-          case "two-week-average":
-            return x.twoCountAverageChange
-            break
-          default:
-            return x.changeSinceLastCount
-        }
-      }),
+      data: counts.slice(1),
     }
   })
 
