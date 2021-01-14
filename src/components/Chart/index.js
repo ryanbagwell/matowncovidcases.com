@@ -43,16 +43,29 @@ export default observer(props => {
     }
   })
 
+  let yAxisLabel
+
+  switch (selectedDataType) {
+    case "raw":
+      yAxisLabel = "Weekly new case count"
+      break
+    case "normalized":
+      yAxisLabel = "Weekly new cases per 100k residents"
+      break
+    case "two-week-average":
+      yAxisLabel = "Two-week average of weekly new cases"
+      break
+    default:
+      yAxisLabel = "Weekly new case count"
+  }
+
   const options = {
     xaxis: {
       categories: headerValues.slice(1),
     },
     yaxis: {
       title: {
-        text:
-          selectedDataType === "raw"
-            ? "Weekly new case count"
-            : "Weekly new cases per 100k residents",
+        text: yAxisLabel,
       },
     },
     stroke: {
