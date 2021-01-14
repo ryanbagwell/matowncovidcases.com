@@ -1,18 +1,18 @@
 const fs = require(`fs`)
 const path = require(`path`)
 const axios = require("axios")
+const parse = require("date-fns/parse")
+const getUnixTime = require("date-fns/getUnixTime")
+const formatDate = require("date-fns/format")
+const populations = require("./src/utils/populations")
 
 exports.onPreBootstrap = async ({ store, cache }, pluginOptions) => {
+  /*
+   *  Get the CSV data
+   */
   const response = await axios.get(
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoy5GcZgrVdoW3LWTyiyD0uB4DqY_DYxUJgE3asRWZCuM4ld4iozNEATa6NafejLO7CJhL4NFGtU5O/pub?output=csv"
   )
-
-  const rows = response.data.split("\r\n")
-  const headerRow = rows[0]
-  const cells = headerRow.split(",")
-  const dates = cells.slice(1).map(d => {
-    return `_${d.replace(/\//g, "_")}`
-  })
 
   /*
    *  Write the csv data to file
@@ -21,28 +21,88 @@ exports.onPreBootstrap = async ({ store, cache }, pluginOptions) => {
     path.join(__dirname, "src", "data", `town-data.csv`),
     response.data
   )
+}
 
-  /*
-   * Create a queries directory
-   */
-  const queriesDir = path.join(__dirname, "src", "queries")
+async function onCreateNode({
+  node,
+  actions,
+  createNodeId,
+  createContentDigest,
+}) {
+  const { createNode, createParentChildLink } = actions
 
-  if (!fs.existsSync(queriesDir)) {
-    fs.mkdirSync(queriesDir)
+  function transformObject(nodeObj) {
+    const ignoreKeys = ["id", "City/Town", "children", "parent", "internal"]
+
+    // Create an array of objects, each object representing a single data point
+    let counts = Object.entries(nodeObj)
+      .reduce((final, [key, value]) => {
+        if (ignoreKeys.includes(key)) return final
+        const d = parse(key, "M/d/yyyy", new Date())
+        const ts = getUnixTime(d)
+
+        const totalCount = parseInt(value)
+
+        return [
+          ...final,
+          {
+            dateStr: key,
+            shortDateStr: formatDate(d, "M/d"),
+            timestamp: ts,
+            totalCount: isNaN(totalCount) ? 0 : totalCount,
+          },
+        ]
+      }, [])
+      .sort((a, b) => {
+        return a.timestamp - b.timestamp
+      })
+
+    const townName = nodeObj["City/Town"]
+
+    /*
+     *  Add the count over count change and other data
+     */
+    counts = counts.map((count, i) => {
+      if (i === 0) {
+        return {
+          ...count,
+          changeSinceLastCount: 0,
+        }
+      }
+
+      const change = count.totalCount - counts[i - 1].totalCount
+
+      return {
+        ...count,
+        changeSinceLastCount: change,
+        changePer100k: Math.round((change * 100000) / populations[townName]),
+        twoCountAverage: (count.totalCount + counts[i - 1]) / 2,
+      }
+    })
+
+    const data = {
+      town: townName,
+      counts,
+    }
+
+    const newNode = {
+      ...data,
+      id: createNodeId(`${node.id}-counts`),
+      children: [],
+      parent: node.id,
+      internal: {
+        contentDigest: createContentDigest(data),
+        type: "Stats",
+      },
+    }
+
+    createNode(newNode)
+    createParentChildLink({ parent: node, child: newNode })
   }
 
-  /*
-   * Write all available dates to a fragment
-   */
-  fs.writeFileSync(
-    path.join(queriesDir, "datesFragment.js"),
-    `
-      import { graphql } from 'gatsby'
-      export const allDateFields = graphql\`
-        fragment allDateFields on TownDataCsv {
-          ${dates.join("\r\n")}
-        }
-      \`
-    `
-  )
+  if (node.internal.type === "TownDataCsv") {
+    transformObject(node)
+  }
 }
+
+exports.onCreateNode = onCreateNode

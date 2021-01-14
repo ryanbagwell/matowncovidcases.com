@@ -5,20 +5,29 @@ import Chart from "react-apexcharts"
 import Box from "@material-ui/core/Box"
 
 export default observer(props => {
-  const store = useStore()
+  const {
+    townCounts,
+    selectedDataType,
+    selectedTowns,
+    getTownData,
+  } = useStore()
 
-  if (store.townCounts.length === 0) return null
+  if (Object.keys(townCounts).length === 0) return null
 
-  let headerValues = store.townCounts[0].counts.map(c => c.date)
+  let headerValues = Object.values(townCounts)[0].counts.map(c => {
+    return c.shortDateStr
+  })
 
-  const series = store.selectedTowns.map(name => {
-    const townData = store.townCounts.find(tc => {
-      return tc.name === name
-    })
+  const series = selectedTowns.map(name => {
+    const townData = getTownData(name)
 
     return {
       name,
-      data: townData.weeklyNewCases.map(x => x.value),
+      data: townData.counts.map(x => {
+        return selectedDataType === "raw"
+          ? x.changeSinceLastCount
+          : x.changePer100k
+      }),
     }
   })
 
@@ -28,7 +37,10 @@ export default observer(props => {
     },
     yaxis: {
       title: {
-        text: "Weekly new case count",
+        text:
+          selectedDataType === "raw"
+            ? "Weekly new case count"
+            : "Weekly new cases per 100k residents",
       },
     },
     stroke: {

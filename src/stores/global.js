@@ -8,7 +8,9 @@ const updateUrlHash = (towns = []) => {
 }
 
 class GlobalStore {
-  townCounts = []
+  townCounts = {}
+
+  selectedDataType = "raw"
 
   selectedTowns = (() => {
     if (typeof window !== "undefined" && window.location.hash) {
@@ -21,7 +23,11 @@ class GlobalStore {
   townNames = []
 
   setTownCounts = (counts = []) => {
-    this.townCounts = counts
+    this.townCounts = counts.reduce((final, current) => {
+      console.log(current)
+      final[current.town] = current
+      return final
+    }, {})
   }
 
   setTownNames = (names = []) => {
@@ -42,16 +48,27 @@ class GlobalStore {
     this.selectedTowns = this.selectedTowns.filter(n => n !== name)
     updateUrlHash(this.selectedTowns)
   }
+
+  getTownData = townName => {
+    return this.townCounts[townName]
+  }
+
+  setSelectedDataType = typeName => {
+    this.selectedDataType = typeName
+  }
 }
 
 decorate(GlobalStore, {
   townCounts: observable,
   selectedTowns: observable,
   townNames: observable,
+  selectedDataType: observable,
   setTownNames: action,
   addSelectedTown: action,
   removeSelectedTown: action,
   setTownCounts: action,
+  getTownData: action,
+  setSelectedDataType: action,
 })
 
 const initializedGlobalStore = new GlobalStore()
