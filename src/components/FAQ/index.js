@@ -20,6 +20,7 @@ export default () => (
           <a
             href="https://www.mass.gov/info-details/covid-19-response-reporting"
             target="_blank"
+            rel="noreferrer"
           >
             Massachusetts Department of Health COVID-19 Weekly Public Health
             Report
@@ -72,6 +73,7 @@ export default () => (
           <a
             href="https://github.com/ryanbagwell/mass-covid-cases-by-town/"
             target="_blank"
+            rel="noreferrer"
           >
             here
           </a>

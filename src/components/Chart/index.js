@@ -25,13 +25,10 @@ export default observer(props => {
       switch (selectedDataType) {
         case "raw":
           return x.changeSinceLastCount
-          break
         case "normalized":
           return x.changePer100k
-          break
         case "two-week-average":
           return x.twoCountAverageChange
-          break
         default:
           return x.changeSinceLastCount
       }

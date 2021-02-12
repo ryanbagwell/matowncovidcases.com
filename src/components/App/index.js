@@ -41,7 +41,7 @@ export default observer(props => {
   useEffect(() => {
     store.setTownCounts(data)
     store.setTownNames(names)
-  }, [])
+  }, [data, names, store])
 
   useEffect(() => {
     if (typeof window !== undefined) {
