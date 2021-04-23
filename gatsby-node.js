@@ -41,13 +41,13 @@ async function onCreateNode({
         const d = parse(key, "M/d/yyyy", new Date())
         const ts = getUnixTime(d)
 
-        const totalCount = parseInt(value)
+        const totalCount = parseInt(value.replace(/\,/gi, ""))
 
         return [
           ...final,
           {
             dateStr: key,
-            shortDateStr: formatDate(d, "M/d"),
+            shortDateStr: formatDate(d, "M/d/yy"),
             timestamp: ts,
             totalCount: isNaN(totalCount) ? 0 : totalCount,
           },
