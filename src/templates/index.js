@@ -4,10 +4,10 @@ import SEO from "../components/SEO"
 import App from "../components/App"
 import { GlobalStoreProvider } from "../stores/global"
 
-const IndexPage = () => (
+const IndexPage = props => (
   <GlobalStoreProvider>
     <SEO title="Home" />
-    <App />
+    <App {...props} />
   </GlobalStoreProvider>
 )
 

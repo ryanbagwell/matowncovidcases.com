@@ -21,7 +21,10 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-transformer-csv`,
+      resolve: `gatsby-transformer-excel`,
+      options: {
+        raw: false,
+      },
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
