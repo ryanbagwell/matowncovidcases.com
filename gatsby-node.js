@@ -1,36 +1,49 @@
 const path = require(`path`)
 const parse = require("date-fns/parse")
-const getUnixTime = require("date-fns/getUnixTime")
+const getTime = require("date-fns/get_time")
 const formatDate = require("date-fns/format")
 const populations = require("./src/utils/populations")
 
+const cleanupTownName = t => {
+  let n = t.replace(/[0-9,\*]/gi, "")
+  if (n === "Unknown town") return "Unknown"
+  return n
+}
+
+const formatCaseCountNumber = n => {
+  return n.replace(/[,]/gi, "")
+}
+
 function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
-  const d = parse(Report_Date, "M/d/yyyy", new Date())
-  const ts = getUnixTime(d)
+  const d = parse(Report_Date, "MM/DD/YYYY")
+  const ts = getTime(d)
 
   return {
     dateStr: Report_Date,
-    shortDateStr: formatDate(d, "M/d/yy"),
+    shortDateStr: formatDate(d, "M/D/YY"),
     timestamp: ts,
-    totalCount: isNaN(Total_Case_Count) ? 0 : Total_Case_Count,
+    totalCount: isNaN(Total_Case_Count) ? 0 : parseInt(Total_Case_Count),
   }
 }
 
 function getCountsByTown(nodes = []) {
+  nodes = nodes.filter(n => !n.City_Town.includes("State"))
+
   return nodes.reduce(
-    (
-      final,
-      { City_Town, Report_Date, Total_Case_Count, Total_Case_Rate },
-      i,
-      source
-    ) => {
-      final[City_Town] = final[City_Town] || {
-        town: City_Town,
+    (final, { City_Town, Report_Date, Total_Case_Count, Total_Case_Rate }) => {
+      const name = cleanupTownName(City_Town)
+
+      final[name] = final[name] || {
+        town: name,
         counts: [],
       }
 
-      final[City_Town].counts.push(
-        getNormalizedCount(City_Town, Report_Date, Total_Case_Count)
+      final[name].counts.push(
+        getNormalizedCount(
+          name,
+          Report_Date,
+          formatCaseCountNumber(Total_Case_Count)
+        )
       )
 
       return final
@@ -46,12 +59,13 @@ function combineNormalizedCounts(nodes = []) {
     if (Object.keys(final).length === 0) return townCounts
 
     Object.entries(townCounts).map(([key, val]) => {
-      final[key] = final[key] || {
-        town: key,
+      const name = cleanupTownName(key)
+      final[name] = final[name] || {
+        town: name,
         counts: [],
       }
 
-      final[key].counts = [...final[key].counts, ...val.counts]
+      final[name].counts = [...final[name].counts, ...val.counts]
     })
 
     return final
@@ -134,6 +148,26 @@ exports.createPages = async ({ graphql, actions }) => {
     results.data.allData08122020Through12Xx2020CsvSheet1.nodes,
     results.data.allLatestXlsxWeeklyCityTown.nodes,
   ])
+
+  /* Add in statewide totals */
+  const dailyTotals = {}
+
+  Object.values(allNormalized).map(({ town, counts }) => {
+    counts.map(c => {
+      dailyTotals[c.shortDateStr] = dailyTotals[c.shortDateStr] || 0
+      dailyTotals[c.shortDateStr] = dailyTotals[c.shortDateStr] + c.totalCount
+    })
+  })
+
+  allNormalized["State"] = {
+    town: "State",
+    counts: Object.entries(dailyTotals).map(
+      ([Report_Date, Total_Case_Count]) => {
+        return getNormalizedCount("State", Report_Date, Total_Case_Count)
+      }
+    ),
+  }
+  /* End statewide totals */
 
   Object.values(allNormalized).map(({ town, counts }) => {
     counts.sort((a, b) => {
