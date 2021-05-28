@@ -362,8 +362,6 @@ module.exports = (() => {
     return final + pop
   }, 0)
 
-  console.log(stateTotal)
-
   return {
     ...pops,
     State: stateTotal,

@@ -10,44 +10,10 @@ import FAQ from "../FAQ"
 export default observer(props => {
   const store = useStore()
   const [Chart, setChart] = useState(null)
-  console.log(props)
-  // let data = useStaticQuery(graphql`
-  //   query {
-  //     allData4222020Through5202020Csv {
-  //       nodes {
-  //         id
-  //         City_Town
-  //         Report_Date
-  //         Total_Case_Count
-  //         Total_Case_Rate
-  //       }
-  //     }
-  //     allTownDataCsv {
-  //       nodes {
-  //         childStats {
-  //           town
-  //           counts {
-  //             dateStr
-  //             shortDateStr
-  //             totalCount
-  //             changePer100k
-  //             changeSinceLastCount
-  //             twoCountAverageChange
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // `)
 
   let names = Object.keys(props.pageContext.townCounts)
 
   let data = Object.values(props.pageContext.townCounts)
-
-  // data.allTownDataCsv.nodes.map(node => {
-  //   names.push(node.childStats.town)
-  //   return node.childStats
-  // })
 
   useEffect(() => {
     store.setTownCounts(data)
