@@ -30,7 +30,18 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-material-ui`,
-    `gatsby-plugin-sitemap`,
+    {
+      resolve: `gatsby-plugin-sitemap`,
+      options: {
+        serialize: ({ path, modifiedGmt }) => {
+          const d = new Date()
+          return {
+            url: path,
+            lastmod: d.toUTCString(),
+          }
+        },
+      },
+    },
     `gatsby-plugin-force-trailing-slashes`,
     {
       resolve: `gatsby-plugin-manifest`,

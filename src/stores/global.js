@@ -14,7 +14,8 @@ class GlobalStore {
 
   selectedTowns = (() => {
     if (typeof window !== "undefined" && window.location.hash) {
-      return window.location.hash.replace("#", "").split(",")
+      const initialTown = window.location.hash.replace("#", "").split(",")
+      return [initialTown]
     }
 
     return []
@@ -74,17 +75,16 @@ const initializedGlobalStore = new GlobalStore()
 
 const storeContext = React.createContext(initializedGlobalStore)
 
-export const GlobalStoreProvider = ({ children }) => {
+export const GlobalStoreProvider = ({ initialTown, children }) => {
+  if (initialTown) {
+    initializedGlobalStore.selectedTowns = [initialTown]
+  }
   const store = useLocalStore(() => initializedGlobalStore)
   return <storeContext.Provider value={store}>{children}</storeContext.Provider>
 }
 
-export const useStore = (initialData = {}) => {
+export const useStore = () => {
   const store = React.useContext(storeContext)
-
-  if (initialData.townName) {
-    store.addSelectedTown(initialData.townName, false)
-  }
 
   if (!store) {
     throw new Error("useStore must be used within a StoreProvider.")

@@ -12,62 +12,55 @@ export default observer(props => {
     selectedTowns,
     getTownData,
   } = useStore()
-  const isHuge = useMediaQuery("(min-width: 1400px)")
 
   if (Object.keys(townCounts).length === 0) return null
 
-  let headerValues = Object.values(townCounts)[0].counts.map(c => {
-    return c.shortDateStr
-  })
+  const series = useMemo(() => {
+    selectedTowns.map(name => {
+      const townData = getTownData(name)
 
-  const series = selectedTowns.map(name => {
-    const townData = getTownData(name)
+      const counts = townData.counts.map(x => {
+        switch (selectedDataType) {
+          case "raw":
+            return x.changeSinceLastCount
+          case "normalized":
+            return x.changePer100k
+          case "two-week-average":
+            return x.twoCountAverageChange
+          default:
+            return x.changeSinceLastCount
+        }
+      })
 
-    const counts = townData.counts.map(x => {
-      switch (selectedDataType) {
-        case "raw":
-          return x.changeSinceLastCount
-        case "normalized":
-          return x.changePer100k
-        case "two-week-average":
-          return x.twoCountAverageChange
-        default:
-          return x.changeSinceLastCount
+      return {
+        name,
+        data: counts.slice(1),
       }
     })
-
-    return {
-      name,
-      data: counts.slice(1),
-    }
-  })
+  }, [townData, selectedDataType])
 
   const xAxisLabels = useMemo(() => {
-    const items = headerValues.slice(1)
-    if (isHuge) {
-      return items
-    }
-
-    return items.map((item, i) => {
-      return i % 2 ? "" : item
+    const items = Object.values(townCounts)[0].counts.map(c => {
+      return c.shortDateStr
     })
-  }, [headerValues.isHuge])
+    return items
+  }, [townCounts])
 
-  let yAxisLabel
-
-  switch (selectedDataType) {
-    case "raw":
-      yAxisLabel = "Weekly new case count"
-      break
-    case "normalized":
-      yAxisLabel = "Weekly new cases per 100k residents"
-      break
-    case "two-week-average":
-      yAxisLabel = "Two-week average of weekly new cases"
-      break
-    default:
-      yAxisLabel = "Weekly new case count"
-  }
+  const yAxisLabel = useMemo(() => {
+    switch (selectedDataType) {
+      case "raw":
+        return "Weekly new case count"
+        break
+      case "normalized":
+        return "Weekly new cases per 100k residents"
+        break
+      case "two-week-average":
+        return "Two-week average of weekly new cases"
+        break
+      default:
+        return "Weekly new case count"
+    }
+  }, [selectedDataType])
 
   const options = {
     annotations: {
@@ -111,7 +104,7 @@ export default observer(props => {
       ],
     },
     xaxis: {
-      categories: headerValues.slice(1),
+      categories: xAxisLabels,
       labels: {
         hideOverlappingLabels: true,
         rotateAlways: false,

@@ -6,7 +6,7 @@ import { GlobalStoreProvider } from "../stores/global"
 
 const IndexPage = props => {
   return (
-    <GlobalStoreProvider>
+    <GlobalStoreProvider initialTown={props.pageContext.townName}>
       <SEO
         title={`${
           props.pageContext.townName || "Home"
