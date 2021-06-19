@@ -3,7 +3,6 @@ import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
 import Chart from "react-apexcharts"
 import Box from "@material-ui/core/Box"
-import useMediaQuery from "@material-ui/core/useMediaQuery"
 
 export default observer(props => {
   const {
@@ -13,31 +12,29 @@ export default observer(props => {
     getTownData,
   } = useStore()
 
-  if (Object.keys(townCounts).length === 0) return null
+  const series = selectedTowns.map(name => {
+    const townData = getTownData(name)
 
-  const series = useMemo(() => {
-    selectedTowns.map(name => {
-      const townData = getTownData(name)
+    if (!townData) return []
 
-      const counts = townData.counts.map(x => {
-        switch (selectedDataType) {
-          case "raw":
-            return x.changeSinceLastCount
-          case "normalized":
-            return x.changePer100k
-          case "two-week-average":
-            return x.twoCountAverageChange
-          default:
-            return x.changeSinceLastCount
-        }
-      })
-
-      return {
-        name,
-        data: counts.slice(1),
+    const counts = townData.counts.map(x => {
+      switch (selectedDataType) {
+        case "raw":
+          return x.changeSinceLastCount
+        case "normalized":
+          return x.changePer100k
+        case "two-week-average":
+          return x.twoCountAverageChange
+        default:
+          return x.changeSinceLastCount
       }
     })
-  }, [townData, selectedDataType])
+
+    return {
+      name,
+      data: counts.slice(1),
+    }
+  })
 
   const xAxisLabels = useMemo(() => {
     const items = Object.values(townCounts)[0].counts.map(c => {

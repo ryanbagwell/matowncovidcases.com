@@ -1,34 +1,14 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import SearchBox from "../SearchBox"
-import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
 import Header from "../Header"
 import Grid from "@material-ui/core/Grid"
 import FAQ from "../FAQ"
+import loadable from "@loadable/component"
 
-export default observer(props => {
-  const store = useStore({
-    townName: props.pageContext.townName || null,
-  })
-  const [Chart, setChart] = useState()
+const Chart = loadable(() => import("../Chart"))
 
-  let names = Object.keys(props.pageContext.townCounts)
-
-  let data = Object.values(props.pageContext.townCounts)
-
-  useEffect(() => {
-    store.setTownCounts(data)
-    store.setTownNames(names)
-  }, [data, names, store])
-
-  useEffect(() => {
-    if (typeof window !== undefined) {
-      import("../Chart").then(mod => {
-        setChart(mod.default)
-      })
-    }
-  }, [])
-
+export default observer(() => {
   return (
     <>
       <Grid container spacing={2} style={{ padding: 20 }}>
@@ -39,7 +19,11 @@ export default observer(props => {
           <SearchBox />
         </Grid>
         <Grid item xs={12}>
-          {Chart ? <Chart /> : <div style={{ height: "75vh" }} />}
+          {typeof window !== "undefined" ? (
+            <Chart />
+          ) : (
+            <div style={{ height: "75vh" }} />
+          )}
         </Grid>
         <Grid
           item

@@ -12,14 +12,7 @@ class GlobalStore {
 
   selectedDataType = "raw"
 
-  selectedTowns = (() => {
-    if (typeof window !== "undefined" && window.location.hash) {
-      const initialTown = window.location.hash.replace("#", "").split(",")
-      return [initialTown]
-    }
-
-    return []
-  })()
+  selectedTowns = []
 
   townNames = []
 
@@ -75,10 +68,20 @@ const initializedGlobalStore = new GlobalStore()
 
 const storeContext = React.createContext(initializedGlobalStore)
 
-export const GlobalStoreProvider = ({ initialTown, children }) => {
+export const GlobalStoreProvider = ({ initialTown, townCounts, children }) => {
   if (initialTown) {
     initializedGlobalStore.selectedTowns = [initialTown]
   }
+
+  initializedGlobalStore.townNames = Object.keys(townCounts)
+  initializedGlobalStore.townCounts = townCounts
+
+  if (typeof window !== "undefined" && window.location.hash) {
+    initializedGlobalStore.selectedTowns = window.location.hash
+      .replace("#", "")
+      .split(",")
+  }
+
   const store = useLocalStore(() => initializedGlobalStore)
   return <storeContext.Provider value={store}>{children}</storeContext.Provider>
 }
