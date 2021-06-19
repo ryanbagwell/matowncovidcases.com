@@ -33,12 +33,12 @@ class GlobalStore {
     this.townNames = names
   }
 
-  addSelectedTown = name => {
+  addSelectedTown = (name, updateRoute = true) => {
     if (this.selectedTowns.indexOf(name) === -1) {
       this.selectedTowns.push(name)
     }
 
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && updateRoute) {
       updateUrlHash(this.selectedTowns)
     }
   }
@@ -79,8 +79,13 @@ export const GlobalStoreProvider = ({ children }) => {
   return <storeContext.Provider value={store}>{children}</storeContext.Provider>
 }
 
-export const useStore = () => {
+export const useStore = (initialData = {}) => {
   const store = React.useContext(storeContext)
+
+  if (initialData.townName) {
+    store.addSelectedTown(initialData.townName, false)
+  }
+
   if (!store) {
     throw new Error("useStore must be used within a StoreProvider.")
   }

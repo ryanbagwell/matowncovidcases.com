@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react"
-import { useStaticQuery, graphql } from "gatsby"
 import SearchBox from "../SearchBox"
 import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
@@ -8,8 +7,10 @@ import Grid from "@material-ui/core/Grid"
 import FAQ from "../FAQ"
 
 export default observer(props => {
-  const store = useStore()
-  const [Chart, setChart] = useState(null)
+  const store = useStore({
+    townName: props.pageContext.townName || null,
+  })
+  const [Chart, setChart] = useState()
 
   let names = Object.keys(props.pageContext.townCounts)
 

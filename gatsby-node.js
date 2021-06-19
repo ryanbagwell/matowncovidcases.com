@@ -3,6 +3,7 @@ const parse = require("date-fns/parse")
 const getTime = require("date-fns/get_time")
 const formatDate = require("date-fns/format")
 const populations = require("./src/utils/populations")
+const slugify = require("slugify")
 
 const cleanupTownName = t => {
   let n = t.replace(/[0-9,\*]/gi, "")
@@ -192,11 +193,23 @@ exports.createPages = async ({ graphql, actions }) => {
   })
 
   const productTemplate = path.resolve(`src/templates/index.js`)
+
   createPage({
     path: `/`,
     component: productTemplate,
     context: {
       townCounts: allNormalized,
     },
+  })
+
+  Object.keys(populations).map(townName => {
+    createPage({
+      path: `/${slugify(townName, { lower: true })}/`,
+      component: productTemplate,
+      context: {
+        townCounts: allNormalized,
+        townName: townName,
+      },
+    })
   })
 }

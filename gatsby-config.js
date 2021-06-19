@@ -3,6 +3,7 @@ module.exports = {
     title: `Massachusetts COVID-19 Cases by Town`,
     description: `An interactive app for viewing town-by-town case trends`,
     author: `Ryan Bagwell <ryan@ryanbagwell.com>`,
+    siteUrl: `https://www.matowncovidcases.com`,
   },
   plugins: [
     `gatsby-plugin-react-helmet`,
@@ -29,6 +30,8 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     `gatsby-plugin-material-ui`,
+    `gatsby-plugin-sitemap`,
+    `gatsby-plugin-force-trailing-slashes`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
