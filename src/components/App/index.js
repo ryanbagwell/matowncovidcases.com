@@ -19,11 +19,9 @@ export default observer(() => {
           <SearchBox />
         </Grid>
         <Grid item xs={12}>
-          {typeof window !== "undefined" ? (
-            <Chart />
-          ) : (
-            <div style={{ height: "75vh" }} />
-          )}
+          <div style={{ minHeight: "65vh" }}>
+            {typeof window !== "undefined" && <Chart />}
+          </div>
         </Grid>
         <Grid
           item
