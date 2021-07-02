@@ -2,14 +2,22 @@
 const fs = require(`fs`)
 const path = require(`path`)
 const axios = require("axios")
+const format = require('date-fns/format')
 
-const url = process.argv[2]
+let url = process.argv[2]
 
 if (!url) {
+
+  const month = format(new Date(), "MMMM").toLowerCase();
+  const day = format(new Date(), 'd')
+  const year = format(new Date(), 'yyyy')
+
+  url = `https://www.mass.gov/doc/covid-19-raw-data-${month}-${day}-${year}/download`
+
   process.stdout.write(
-    "Please supply a url to an excel file as the first argument\n"
+    `No url supplied. Trying to download from ${url}\n`
   )
-  process.exit(1)
+
 }
 
 ;(async function runIt() {
