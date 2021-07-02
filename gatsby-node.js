@@ -1,6 +1,6 @@
 const path = require(`path`)
 const parse = require("date-fns/parse")
-const getTime = require("date-fns/get_time")
+const getTime = require("date-fns/getTime")
 const formatDate = require("date-fns/format")
 const populations = require("./src/utils/populations")
 const slugify = require("slugify")
@@ -16,12 +16,12 @@ const formatCaseCountNumber = n => {
 }
 
 function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
-  const d = parse(Report_Date, "MM/DD/YYYY")
+  const d = parse(Report_Date, "MM/dd/yyyy", new Date())
   const ts = getTime(d)
 
   return {
     dateStr: Report_Date,
-    shortDateStr: formatDate(d, "M/D/YY"),
+    shortDateStr: formatDate(d, "M/d/yy"),
     timestamp: ts,
     totalCount: isNaN(Total_Case_Count) ? 0 : parseInt(Total_Case_Count),
   }
