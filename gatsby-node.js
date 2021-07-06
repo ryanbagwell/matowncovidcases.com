@@ -16,7 +16,7 @@ const formatCaseCountNumber = n => {
 }
 
 function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
-  const d = parse(Report_Date, "MM/dd/yyyy", new Date())
+  const d = parse(Report_Date, "M/d/yy", new Date())
   const ts = getTime(d)
 
   return {
@@ -28,7 +28,9 @@ function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
 }
 
 function getCountsByTown(nodes = []) {
-  nodes = nodes.filter(n => !n.City_Town.includes("State"))
+  nodes = nodes.filter((n) => {
+    return !n.City_Town.includes("State") && !n.City_Town.includes("All of Massachusetts")
+  });
 
   return nodes.reduce(
     (final, { City_Town, Report_Date, Total_Case_Count, Total_Case_Rate }) => {
