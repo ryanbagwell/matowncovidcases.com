@@ -127,6 +127,20 @@ exports.createPages = async ({ graphql, actions }) => {
           Average_Daily_Rate
         }
       }
+      allDataThroughJune2021XlsxWeeklyCityTown {
+        nodes {
+          City_Town
+          id
+          Report_Date
+          Total_Case_Count: Total_Case_Counts
+          Total_Positive_Tests
+          Total_Tests
+          Total_Tests_Last_Two_Weeks
+          Two_Week_Case_Counts
+          Testing_Rate
+          Average_Daily_Rate
+        }
+      }
       allLatestXlsxWeeklyCityTown {
         nodes {
           City_Town
@@ -149,6 +163,7 @@ exports.createPages = async ({ graphql, actions }) => {
     results.data.allData5272020Through07082020CsvSheet1.nodes,
     results.data.allData7152020Through8052020CsvSheet1.nodes,
     results.data.allData08122020Through12Xx2020CsvSheet1.nodes,
+    results.data.allDataThroughJune2021XlsxWeeklyCityTown.nodes,
     results.data.allLatestXlsxWeeklyCityTown.nodes,
   ])
 
