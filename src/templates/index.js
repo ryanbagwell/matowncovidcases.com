@@ -2,7 +2,6 @@ import "fontsource-roboto"
 import React from "react"
 import SEO from "../components/SEO"
 import App from "../components/App"
-import { GlobalStoreProvider } from "../stores/global"
 
 const getPageDescription = town => {
   if (town) {
@@ -14,10 +13,7 @@ const getPageDescription = town => {
 
 const IndexPage = props => {
   return (
-    <GlobalStoreProvider
-      initialTown={props.pageContext.townName}
-      townCounts={props.pageContext.townCounts}
-    >
+    <>
       <SEO
         title={`${
           props.pageContext.townName || "Home"
@@ -25,7 +21,7 @@ const IndexPage = props => {
         description={getPageDescription(props.pageContext.townName)}
       />
       <App {...props} />
-    </GlobalStoreProvider>
+    </>
   )
 }
 
