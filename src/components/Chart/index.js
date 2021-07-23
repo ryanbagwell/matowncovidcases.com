@@ -40,7 +40,7 @@ export default observer(props => {
     const items = Object.values(townCounts)[0].counts.map(c => {
       return c.shortDateStr
     })
-    return items
+    return items.slice(1)
   }, [townCounts])
 
   const yAxisLabel = useMemo(() => {
