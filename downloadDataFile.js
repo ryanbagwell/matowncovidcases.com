@@ -30,7 +30,7 @@ const getDownloadUrl = (offset = 0) => {
 
   const saveIt = (data) => {
     fs.writeFileSync(
-      path.join(__dirname, "src", "data", `latest.xlsx`),
+      path.join(__dirname, "src", "data", "towns", `latest.xlsx`),
       data,
       "binary"
     )
