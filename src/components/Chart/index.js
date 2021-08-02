@@ -12,6 +12,23 @@ const Y_AXIS_LABELS = {
   "school-staff-cases": "Cases reported by school staff",
 }
 
+const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
+  y: 50,
+  stokeDashArray: 5,
+  fillColor: "black",
+  borderColor: "black",
+  label: {
+    borderColor: "black",
+    position: "left",
+    textAnchor: "start",
+    style: {
+      color: "#fff",
+      background: "black",
+    },
+    text: "CDC indoor mask recomendation",
+  },
+}
+
 export default observer(props => {
   const {
     townCounts,
@@ -61,44 +78,48 @@ export default observer(props => {
 
   const options = {
     annotations: {
-      xaxis: [
-        {
-          x: "5/6/20",
-          strokeDashArray: 0,
-          label: {
-            text: "Masks required inside",
-            borderColor: "#775DD0",
-            style: {
-              color: "#fff",
-              background: "#775DD0",
-            },
-          },
-        },
-        {
-          x: "11/6/20",
-          strokeDashArray: 0,
-          label: {
-            text: "Masks required outside",
-            borderColor: "#775DD0",
-            style: {
-              color: "#fff",
-              background: "#775DD0",
-            },
-          },
-        },
-        {
-          x: "6/3/21",
-          strokeDashArray: 0,
-          label: {
-            text: "Mask mandate lifted",
-            borderColor: "#775DD0",
-            style: {
-              color: "#fff",
-              background: "#775DD0",
-            },
-          },
-        },
-      ],
+      yaxis:
+        selectedDataType === "normalized"
+          ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
+          : [],
+      // xaxis: [
+      //   {
+      //     x: "5/6/20",
+      //     strokeDashArray: 0,
+      //     label: {
+      //       text: "Masks required inside",
+      //       borderColor: "#775DD0",
+      //       style: {
+      //         color: "#fff",
+      //         background: "#775DD0",
+      //       },
+      //     },
+      //   },
+      //   {
+      //     x: "11/6/20",
+      //     strokeDashArray: 0,
+      //     label: {
+      //       text: "Masks required outside",
+      //       borderColor: "#775DD0",
+      //       style: {
+      //         color: "#fff",
+      //         background: "#775DD0",
+      //       },
+      //     },
+      //   },
+      //   {
+      //     x: "6/3/21",
+      //     strokeDashArray: 0,
+      //     label: {
+      //       text: "Mask mandate lifted",
+      //       borderColor: "#775DD0",
+      //       style: {
+      //         color: "#fff",
+      //         background: "#775DD0",
+      //       },
+      //     },
+      //   },
+      // ],
     },
     xaxis: {
       categories: xAxisLabels,
