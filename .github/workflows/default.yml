@@ -1,6 +1,6 @@
 name: Update latest data
 on:
-  workflow_dispatch
+  workflow_dispatch:
   schedule:
     - cron: "30 9,10 * * 4" # Run at 5:30 and 6:30 pm every Thuesday Eastern Time (cron is in UTC)
 jobs:
