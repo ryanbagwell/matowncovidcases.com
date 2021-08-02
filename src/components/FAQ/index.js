@@ -16,18 +16,24 @@ export default () => (
       </AccordionSummary>
       <AccordionDetails>
         <Typography>
-          The data used here comes from the{" "}
+          The case data used here comes from the{" "}
           <a
             href="https://www.mass.gov/info-details/covid-19-response-reporting"
             target="_blank"
             rel="noreferrer"
           >
-            Massachusetts Department of Health COVID-19 Weekly Public Health
-            Report
+            Massachusetts Department of Health COVID-19 Dashboard
           </a>
-          . Town-by-town aggregate case counts are released each Wednesday by 4
-          p.m. I export that spreadsheet data and import it into my own
-          spreadsheet, which is used to create this chart.
+          . Town-by-town aggregate case counts are released each Thursday. Those
+          figures are processed into the data you see here.
+          <br />
+          <br />
+          School data comes from the{" "}
+          <a href="https://www.doe.mass.edu/covid19/positive-cases/">
+            Massachusetts Department of Elementary and Secondary Education
+          </a>
+          . During the 2020-2021 school year, it was also released each
+          Thursday.
         </Typography>
       </AccordionDetails>
     </Accordion>
@@ -60,6 +66,23 @@ export default () => (
           cases reported in a town for a particuar week, and the state also
           discovers that one of the previously reported cases actually belongs
           in another town, a net decrease would appear for that week.
+        </Typography>
+      </AccordionDetails>
+    </Accordion>
+    <Accordion>
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="h6">About student and staff cases</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Typography>
+          School student and staff cases are only available if the name of the
+          district matches the name of the town. Therefore, it would not include
+          most private schools, regional schools and other districts whose
+          students come from multiple municipalities.
+          <br />
+          <br />
+          The figures represent positive covid cases among students who were in
+          a school building within the previous 7 days of testing positive.
         </Typography>
       </AccordionDetails>
     </Accordion>

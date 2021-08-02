@@ -4,6 +4,14 @@ import { observer } from "mobx-react"
 import Chart from "react-apexcharts"
 import Box from "@material-ui/core/Box"
 
+const Y_AXIS_LABELS = {
+  raw: "Weekly new case count",
+  normalized: "Weekly new cases per 100k residents",
+  "two-week-average": "Two-week average of weekly new cases",
+  "school-student-cases": "Cases reported by school students",
+  "school-staff-cases": "Cases reported by school staff",
+}
+
 export default observer(props => {
   const {
     townCounts,
@@ -25,6 +33,10 @@ export default observer(props => {
           return x.changePer100k
         case "two-week-average":
           return x.twoCountAverageChange
+        case "school-student-cases":
+          return x.newStudentCases
+        case "school-staff-cases":
+          return x.newStaffCases
         default:
           return x.changeSinceLastCount
       }
@@ -44,19 +56,7 @@ export default observer(props => {
   }, [townCounts])
 
   const yAxisLabel = useMemo(() => {
-    switch (selectedDataType) {
-      case "raw":
-        return "Weekly new case count"
-        break
-      case "normalized":
-        return "Weekly new cases per 100k residents"
-        break
-      case "two-week-average":
-        return "Two-week average of weekly new cases"
-        break
-      default:
-        return "Weekly new case count"
-    }
+    return Y_AXIS_LABELS[selectedDataType] || Y_AXIS_LABELS.raw
   }, [selectedDataType])
 
   const options = {

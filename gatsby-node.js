@@ -4,6 +4,8 @@ const getTime = require("date-fns/getTime")
 const formatDate = require("date-fns/format")
 const populations = require("./src/utils/populations")
 const slugify = require("slugify")
+const randomColor = require("random-color")
+const memoize = require("memoize-one")
 
 const cleanupTownName = t => {
   let n = t.replace(/[0-9,\*]/gi, "")
@@ -15,22 +17,31 @@ const formatCaseCountNumber = n => {
   return n.replace(/[,]/gi, "")
 }
 
+const parseReportDate = memoize(dateStr => {
+  return parse(dateStr, "M/d/yy", new Date())
+})
+
 function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
-  const d = parse(Report_Date, "M/d/yy", new Date())
+  const d = parseReportDate(Report_Date)
   const ts = getTime(d)
 
   return {
     dateStr: Report_Date,
     shortDateStr: formatDate(d, "M/d/yy"),
+    weekNumber: formatDate(d, "I"),
+    year: formatDate(d, "yy"),
     timestamp: ts,
     totalCount: isNaN(Total_Case_Count) ? 0 : parseInt(Total_Case_Count),
   }
 }
 
 function getCountsByTown(nodes = []) {
-  nodes = nodes.filter((n) => {
-    return !n.City_Town.includes("State") && !n.City_Town.includes("All of Massachusetts")
-  });
+  nodes = nodes.filter(n => {
+    return (
+      !n.City_Town.includes("State") &&
+      !n.City_Town.includes("All of Massachusetts")
+    )
+  })
 
   return nodes.reduce(
     (final, { City_Town, Report_Date, Total_Case_Count, Total_Case_Rate }) => {
@@ -38,6 +49,7 @@ function getCountsByTown(nodes = []) {
 
       final[name] = final[name] || {
         town: name,
+        color: randomColor(0.99, 0.99).hexString(),
         counts: [],
       }
 
@@ -79,6 +91,15 @@ exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
   const results = await graphql(`
     query {
+      allSy2021CsvSheet1 {
+        nodes {
+          Report_Date
+          Code
+          City_Town: Name
+          Students
+          Staff
+        }
+      }
       allData4222020Through5202020CsvSheet1 {
         nodes {
           id
@@ -163,9 +184,59 @@ exports.createPages = async ({ graphql, actions }) => {
     results.data.allData5272020Through07082020CsvSheet1.nodes,
     results.data.allData7152020Through8052020CsvSheet1.nodes,
     results.data.allData08122020Through12172020CsvSheet1.nodes,
-    //results.data.allData12242020Through06312021XlsxWeeklyCityTown.nodes,
     results.data.allLatestXlsxWeeklyCityTown.nodes,
   ])
+
+  /* Organize the flattened list of school counts by Town and Date
+    so it's easier to look up. */
+  const schoolCountsByTown = results.data.allSy2021CsvSheet1.nodes.reduce(
+    (final, { Report_Date, Code, City_Town, Students, Staff }) => {
+      const name = cleanupTownName(City_Town || "Unknown Town")
+
+      const d = parseReportDate(Report_Date)
+      const year = formatDate(d, "yy")
+      const weekNumber = formatDate(d, "I")
+
+      final[name] = final[name] || {}
+      final[name][year] = final[name][year] || {}
+      final[name][year] = {
+        ...final[name][year],
+        [weekNumber]: {
+          students: Students,
+          staff: Staff,
+        },
+      }
+
+      return final
+    },
+    {}
+  )
+
+  /* Add in school counts */
+  Object.keys(allNormalized).map(townName => {
+    allNormalized[townName].counts.map((count, i) => {
+      const d = parseReportDate(count.dateStr)
+      const year = formatDate(d, "yy")
+
+      try {
+        const schoolCount = schoolCountsByTown[townName][year][count.weekNumber]
+
+        allNormalized[townName].counts[i] = {
+          ...count,
+          newStudentCases: schoolCount.students
+            ? parseInt(schoolCount.students)
+            : 0,
+          newStaffCases: schoolCount.staff ? parseInt(schoolCount.staff) : 0,
+        }
+      } catch (err) {
+        allNormalized[townName].counts[i] = {
+          ...count,
+          newStudentCases: 0,
+          newStaffCases: 0,
+        }
+      }
+    })
+  })
 
   /* Add in statewide totals */
   const dailyTotals = {}

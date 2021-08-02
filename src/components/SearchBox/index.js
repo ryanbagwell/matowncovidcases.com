@@ -95,13 +95,15 @@ export default observer(props => {
               }}
               label="Data to Show"
             >
-              <MenuItem value="raw">
-                <em>New Cases</em>
-              </MenuItem>
+              <MenuItem value="raw">New Cases</MenuItem>
               <MenuItem value="normalized">
                 New Cases per 100k residents
               </MenuItem>
-              <MenuItem value="two-week-average">Two-week average</MenuItem>
+              <MenuItem value="two-week-average">Two-week average</MenuItem>{" "}
+              <MenuItem value="school-student-cases">
+                School student cases
+              </MenuItem>
+              <MenuItem value="school-staff-cases">School staff cases</MenuItem>
             </Select>
           </FormControl>
         </Grid>

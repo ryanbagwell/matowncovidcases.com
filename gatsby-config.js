@@ -21,13 +21,13 @@ module.exports = {
         path: `${__dirname}/src/data/towns`,
       },
     },
-    // {
-    //   resolve: `gatsby-source-filesystem`,
-    //   options: {
-    //     name: `schoolData`,
-    //     path: `${__dirname}/src/data/schools`,
-    //   },
-    // },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `schoolData`,
+        path: `${__dirname}/src/data/schools`,
+      },
+    },
     {
       resolve: `gatsby-transformer-excel`,
       options: {
