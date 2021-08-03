@@ -4,14 +4,6 @@ import { observer } from "mobx-react"
 import Chart from "react-apexcharts"
 import Box from "@material-ui/core/Box"
 
-const Y_AXIS_LABELS = {
-  raw: "Weekly new case count",
-  normalized: "Weekly new cases per 100k residents",
-  "two-week-average": "Two-week average of weekly new cases",
-  "school-student-cases": "Cases reported by school students",
-  "school-staff-cases": "Cases reported by school staff",
-}
-
 const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
   y: 50,
   stokeDashArray: 5,
@@ -35,6 +27,7 @@ export default observer(props => {
     selectedDataType,
     selectedTowns,
     getTownData,
+    dataTypes,
   } = useStore()
 
   const series = selectedTowns.map(name => {
@@ -42,21 +35,8 @@ export default observer(props => {
 
     if (!townData) return []
 
-    const counts = townData.counts.map(x => {
-      switch (selectedDataType) {
-        case "raw":
-          return x.changeSinceLastCount
-        case "normalized":
-          return x.changePer100k
-        case "two-week-average":
-          return x.twoCountAverageChange
-        case "school-student-cases":
-          return x.newStudentCases
-        case "school-staff-cases":
-          return x.newStaffCases
-        default:
-          return x.changeSinceLastCount
-      }
+    const counts = townData.counts.map(c => {
+      return c[selectedDataType]
     })
 
     return {
@@ -73,13 +53,17 @@ export default observer(props => {
   }, [townCounts])
 
   const yAxisLabel = useMemo(() => {
-    return Y_AXIS_LABELS[selectedDataType] || Y_AXIS_LABELS.raw
-  }, [selectedDataType])
+    try {
+      return dataTypes.find(dt => selectedDataType === dt.name).verboseTitle
+    } catch (err) {
+      return ""
+    }
+  }, [selectedDataType, dataTypes])
 
   const options = {
     annotations: {
       yaxis:
-        selectedDataType === "normalized"
+        selectedDataType === "changePer100k"
           ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
           : [],
       // xaxis: [

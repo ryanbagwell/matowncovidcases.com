@@ -18,6 +18,7 @@ export default observer(props => {
     removeSelectedTown,
     selectedDataType,
     setSelectedDataType,
+    dataTypes,
   } = useStore()
 
   const input = useRef(null)
@@ -95,15 +96,11 @@ export default observer(props => {
               }}
               label="Data to Show"
             >
-              <MenuItem value="raw">New Cases</MenuItem>
-              <MenuItem value="normalized">
-                New Cases per 100k residents
-              </MenuItem>
-              <MenuItem value="two-week-average">Two-week average</MenuItem>{" "}
-              <MenuItem value="school-student-cases">
-                School student cases
-              </MenuItem>
-              <MenuItem value="school-staff-cases">School staff cases</MenuItem>
+              {dataTypes.map(({ title, name }) => (
+                <MenuItem value={name} key={name}>
+                  {title}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>

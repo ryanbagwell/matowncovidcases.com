@@ -7,14 +7,64 @@ const updateUrlHash = (towns = []) => {
   history.pushState(null, null, `/#${towns.join(",")}`)
 }
 
+const DATA_TYPES = [
+  {
+    title: "New cases",
+    verboseTitle: "Weekly new case count",
+    name: "changeSinceLastCount",
+    lineStyle: {
+      width: 2,
+      dashArray: 0,
+    },
+  },
+  {
+    title: "New Cases per 100k residents",
+    verboseTitle: "Weekly new cases per 100k residents",
+    name: "changePer100k",
+    lineStyle: {
+      width: 2,
+      dashArray: 0,
+    },
+  },
+  {
+    title: "Two-week average",
+    verboseTitle: "Two-week average of new reported cases",
+    name: "twoCountAverageChange",
+    lineStyle: {
+      width: 2,
+      dashArray: 0,
+    },
+  },
+  {
+    title: "School student cases",
+    verboseTitle: "Cases reported by school students",
+    name: "newStudentCases",
+    lineStyle: {
+      width: 2,
+      dashArray: 0,
+    },
+  },
+  {
+    title: "School staff cases",
+    verboseTitle: "Cases reported by school staff",
+    name: "newStaffCases",
+    lineStyle: {
+      width: 2,
+      dashArray: 0,
+    },
+  },
+]
+
 class GlobalStore {
   townCounts = {}
 
-  selectedDataType = "raw"
+  selectedDataType = "changeSinceLastCount"
 
   selectedTowns = []
 
   townNames = []
+
+  dataTypes = DATA_TYPES
 
   setTownCounts = (counts = []) => {
     this.townCounts = counts.reduce((final, current) => {
