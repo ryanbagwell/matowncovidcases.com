@@ -1,27 +1,29 @@
-import React, { useRef } from "react"
+import React, { useRef, useMemo } from "react"
 import TextField from "@material-ui/core/TextField"
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import Chip from "@material-ui/core/Chip"
 import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
 import Grid from "@material-ui/core/Grid"
-import FormControl from "@material-ui/core/FormControl"
-import Select from "@material-ui/core/Select"
-import InputLabel from "@material-ui/core/InputLabel"
-import MenuItem from "@material-ui/core/MenuItem"
+import DataTypeSelector from "../DataTypeSelector"
 
 export default observer(props => {
   const {
-    townNames,
+    availableTowns,
     addSelectedTown,
     selectedTowns,
     removeSelectedTown,
-    selectedDataType,
-    setSelectedDataType,
-    dataTypes,
   } = useStore()
 
   const input = useRef(null)
+
+  const options = useMemo(() => {
+    return availableTowns.reduce((final, { town: name }) => {
+      const isSelected = selectedTowns.find(town => town.name === name)
+      if (isSelected) return final
+      return [...final, name]
+    }, [])
+  }, [availableTowns, selectedTowns])
 
   return (
     <>
@@ -29,7 +31,7 @@ export default observer(props => {
         <Grid item xs={12} sm={5} md={3}>
           <Autocomplete
             autoHighlight={true}
-            options={townNames.filter(n => selectedTowns.indexOf(n) === -1)}
+            options={options}
             onChange={(e, townName) => {
               townName && addSelectedTown(townName)
             }}
@@ -57,7 +59,7 @@ export default observer(props => {
             flexWrap: "wrap",
           }}
         >
-          {selectedTowns.map(name => {
+          {selectedTowns.map(({ town: name }) => {
             return (
               <Chip
                 key={name}
@@ -76,8 +78,9 @@ export default observer(props => {
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={5} md={3}>
-          <FormControl
+        <Grid item xs={12}>
+          <DataTypeSelector />
+          {/* <FormControl
             variant="outlined"
             style={{
               marginTop: 20,
@@ -102,7 +105,7 @@ export default observer(props => {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
         </Grid>
       </Grid>
     </>
