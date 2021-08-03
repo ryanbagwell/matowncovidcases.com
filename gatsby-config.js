@@ -29,6 +29,13 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `vaccinationData`,
+        path: `${__dirname}/src/data/vaccinations`,
+      },
+    },
+    {
       resolve: `gatsby-transformer-excel`,
       options: {
         raw: false,
