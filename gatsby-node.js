@@ -290,14 +290,16 @@ exports.createPages = async ({ graphql, actions }) => {
     },
   })
 
-  Object.keys(populations).map(townName => {
-    createPage({
-      path: `/${slugify(townName, { lower: true })}/`,
-      component: productTemplate,
-      context: {
-        townCounts: allNormalized,
-        townName: townName,
-      },
+  if (process.env.NODE_ENV === "production") {
+    Object.keys(populations).map(townName => {
+      createPage({
+        path: `/${slugify(townName, { lower: true })}/`,
+        component: productTemplate,
+        context: {
+          townCounts: allNormalized,
+          townName: townName,
+        },
+      })
     })
-  })
+  }
 }
