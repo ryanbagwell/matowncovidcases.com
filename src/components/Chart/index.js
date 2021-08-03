@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
-import Chart from "react-apexcharts"
+import Chart from "react-apexcharts/src/react-apexcharts"
 import Box from "@material-ui/core/Box"
 
 const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
@@ -22,50 +22,51 @@ const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
 }
 
 export default observer(props => {
-  const {
-    townCounts,
-    selectedDataType,
-    selectedTowns,
-    getTownData,
-    dataTypes,
-  } = useStore()
+  const { townCounts, selectedDataTypes, selectedTowns } = useStore()
 
-  const series = selectedTowns.map(name => {
-    const townData = getTownData(name)
+  const series = selectedTowns.reduce((final, current) => {
+    const { town: townName, color, counts } = current
 
-    if (!townData) return []
+    if (!counts || !selectedDataTypes) return final
 
-    const counts = townData.counts.map(c => {
-      return c[selectedDataType]
+    selectedDataTypes.map(dt => {
+      const finalCounts = counts.map(c => {
+        return c[dt.name]
+      })
+
+      final.push({
+        name: `${townName} - ${dt.title}`,
+        data: finalCounts.slice(1),
+        townName,
+        color,
+        config: dt,
+      })
     })
 
-    return {
-      name,
-      data: counts.slice(1),
-    }
-  })
+    return final
+  }, [])
 
   const xAxisLabels = useMemo(() => {
     const items = Object.values(townCounts)[0].counts.map(c => {
       return c.shortDateStr
     })
     return items.slice(1)
-  }, [townCounts])
+  }, [selectedTowns, townCounts])
 
   const yAxisLabel = useMemo(() => {
     try {
-      return dataTypes.find(dt => selectedDataType === dt.name).verboseTitle
+      return selectedDataTypes[0].verboseTitle
     } catch (err) {
       return ""
     }
-  }, [selectedDataType, dataTypes])
+  }, [selectedDataTypes])
 
   const options = {
     annotations: {
-      yaxis:
-        selectedDataType === "changePer100k"
-          ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
-          : [],
+      // yaxis:
+      //   selectedDataTypes === "changePer100k"
+      //     ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
+      //     : [],
       // xaxis: [
       //   {
       //     x: "5/6/20",
@@ -118,15 +119,35 @@ export default observer(props => {
         trim: true,
       },
     },
-    stroke: {
-      curve: "smooth",
-      width: 2,
-    },
-    height: "75vh",
     legend: {
+      customLegendItems: series.reduce((final, current) => {
+        final.push(final.indexOf(current.townName) > -1 ? "" : current.townName)
+
+        return final
+      }, []),
+      labels: {
+        useSeriesColors: false,
+      },
       fontSize: "20px",
       itemMargin: {
         horizontal: 10,
+      },
+    },
+    stroke: {
+      curve: "smooth",
+      width: series.map(s => s.config.lineStyle.width),
+      dashArray: series.map(s => s.config.lineStyle.dashArray),
+    },
+    height: "75vh",
+    colors: series.map(s => s.color),
+    chart: {
+      toolbar: {
+        show: false,
+        tools: {
+          zoom: true,
+          zoomin: true,
+          zoomout: true,
+        },
       },
     },
   }

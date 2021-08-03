@@ -2,21 +2,13 @@
 import React from "react"
 import { observable, action, decorate } from "mobx"
 import { useLocalStore } from "mobx-react"
+import memoize from "memoize-one"
 
 const updateUrlHash = (towns = []) => {
-  history.pushState(null, null, `/#${towns.join(",")}`)
+  history.pushState(null, null, `/#${towns.map(t => t.town).join(",")}`)
 }
 
 const DATA_TYPES = [
-  {
-    title: "New cases",
-    verboseTitle: "Weekly new case count",
-    name: "changeSinceLastCount",
-    lineStyle: {
-      width: 2,
-      dashArray: 0,
-    },
-  },
   {
     title: "New Cases per 100k residents",
     verboseTitle: "Weekly new cases per 100k residents",
@@ -27,12 +19,21 @@ const DATA_TYPES = [
     },
   },
   {
+    title: "New cases",
+    verboseTitle: "Weekly new case count",
+    name: "changeSinceLastCount",
+    lineStyle: {
+      width: 2,
+      dashArray: 2,
+    },
+  },
+  {
     title: "Two-week average",
     verboseTitle: "Two-week average of new reported cases",
     name: "twoCountAverageChange",
     lineStyle: {
       width: 2,
-      dashArray: 0,
+      dashArray: 4,
     },
   },
   {
@@ -41,7 +42,7 @@ const DATA_TYPES = [
     name: "newStudentCases",
     lineStyle: {
       width: 2,
-      dashArray: 0,
+      dashArray: 6,
     },
   },
   {
@@ -50,7 +51,7 @@ const DATA_TYPES = [
     name: "newStaffCases",
     lineStyle: {
       width: 2,
-      dashArray: 0,
+      dashArray: 8,
     },
   },
 ]
@@ -58,11 +59,11 @@ const DATA_TYPES = [
 class GlobalStore {
   townCounts = {}
 
-  selectedDataType = "changeSinceLastCount"
+  selectedDataTypes = [DATA_TYPES[0]]
 
   selectedTowns = []
 
-  townNames = []
+  availableTowns = []
 
   dataTypes = DATA_TYPES
 
@@ -73,22 +74,28 @@ class GlobalStore {
     }, {})
   }
 
-  setTownNames = (names = []) => {
-    this.townNames = names
+  setAvailableTowns = (towns = []) => {
+    this.availableTowns = towns
   }
 
   addSelectedTown = (name, updateRoute = true) => {
-    if (this.selectedTowns.indexOf(name) === -1) {
-      this.selectedTowns.push(name)
-    }
+    const townToAdd = this.getTownByName(name)
+
+    const isSelected = this.selectedTowns.find(({ town }) => town === name)
+
+    if (!isSelected) this.selectedTowns.push(townToAdd)
 
     if (typeof window !== "undefined" && updateRoute) {
       updateUrlHash(this.selectedTowns)
     }
   }
 
+  getTownByName = memoize(townName => {
+    return this.availableTowns.find(({ town: name }) => name === townName)
+  })
+
   removeSelectedTown = name => {
-    this.selectedTowns = this.selectedTowns.filter(n => n !== name)
+    this.selectedTowns = this.selectedTowns.filter(({ town }) => town !== name)
     updateUrlHash(this.selectedTowns)
   }
 
@@ -96,22 +103,34 @@ class GlobalStore {
     return this.townCounts[townName]
   }
 
-  setSelectedDataType = typeName => {
-    this.selectedDataType = typeName
+  addSelectedDataType = typeName => {
+    const dt = this.getDataTypeByName(typeName)
+    this.selectedDataTypes.push(dt)
   }
+
+  removeSelectedDataType = typeName => {
+    this.selectedDataTypes = this.selectedDataTypes.filter(
+      dt => dt.name !== typeName
+    )
+  }
+
+  getDataTypeByName = memoize(typeName => {
+    return this.dataTypes.find(({ name }) => name === typeName)
+  })
 }
 
 decorate(GlobalStore, {
   townCounts: observable,
   selectedTowns: observable,
-  townNames: observable,
-  selectedDataType: observable,
-  setTownNames: action,
+  availableTowns: observable,
+  selectedDataTypes: observable,
+  setAvailableTowns: action,
   addSelectedTown: action,
   removeSelectedTown: action,
   setTownCounts: action,
   getTownData: action,
-  setSelectedDataType: action,
+  addSelectedDataTypes: action,
+  removeSelectedDataType: action,
 })
 
 const initializedGlobalStore = new GlobalStore()
@@ -119,17 +138,18 @@ const initializedGlobalStore = new GlobalStore()
 const storeContext = React.createContext(initializedGlobalStore)
 
 export const GlobalStoreProvider = ({ initialTown, townCounts, children }) => {
-  if (initialTown) {
-    initializedGlobalStore.selectedTowns = [initialTown]
-  }
+  // if (initialTown) {
+  //   initializedGlobalStore.availableTowns = [initialTown]
+  // }
 
-  initializedGlobalStore.townNames = Object.keys(townCounts)
+  initializedGlobalStore.availableTowns = Object.values(townCounts)
   initializedGlobalStore.townCounts = townCounts
 
   if (typeof window !== "undefined" && window.location.hash) {
-    initializedGlobalStore.selectedTowns = window.location.hash
-      .replace("#", "")
-      .split(",")
+    const selectedTownNames = window.location.hash.replace("#", "").split(",")
+    initializedGlobalStore.selectedTowns = selectedTownNames.map(n =>
+      initializedGlobalStore.getTownByName(n)
+    )
   }
 
   const store = useLocalStore(() => initializedGlobalStore)

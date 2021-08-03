@@ -77,7 +77,13 @@ function SEO({ description, lang, meta, title }) {
           content: metaDescription,
         },
       ].concat(meta)}
-    />
+    >
+      <style type="text/css">{`
+        .apexcharts-legend-series[seriesname=""] {
+          display: none !important;
+        }
+    `}</style>
+    </Helmet>
   )
 }
 
