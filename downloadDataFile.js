@@ -60,7 +60,6 @@ const getVaccineDownloadUrl = (offset = 0) => {
       const response = await getIt(url)
       saveIt(response.data, filename)
       process.stdout.write("Done!\n")
-      process.exit(0)
     } catch (err) {
       offset++
       process.stdout.write("Error. Going back a day ...\n")
@@ -68,13 +67,15 @@ const getVaccineDownloadUrl = (offset = 0) => {
     }
   }
 
-  doItUntilSuccess(
+  await doItUntilSuccess(
     getCasesDownloadUrl,
     path.join("src", "data", "towns", `latest.xlsx`)
   )
 
-  doItUntilSuccess(
+  await doItUntilSuccess(
     getVaccineDownloadUrl,
-    path.join("src", "data", "vaccinations", `latest.xlsx`)
+    path.join("src", "data", "vaccinations", `vaccinations.xlsx`)
   )
+
+  process.exit(0)
 })()
