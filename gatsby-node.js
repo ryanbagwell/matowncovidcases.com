@@ -176,6 +176,23 @@ exports.createPages = async ({ graphql, actions }) => {
           Average_Daily_Rate
         }
       }
+      vaccinations: allVaccinationsXlsxAgeMunicipality {
+        nodes {
+          town: _xEMPTY
+          ageGroup: _xEMPTYx1
+          population: _xEMPTYx2
+          populationOfTownPopulation: _xEMPTYx3
+          oneDose: _xEMPTYx4
+          oneDosePerCapita: _xEMPTYx5
+          oneDoseProporationOfTown: _xEMPTYx6
+          fullyVaccinated: _xEMPTYx7
+          fullyVaccinatedPerCapita: _xEMPTYx8
+          fullyVaccinatedProportionOfTown: _xEMPTYx9
+          partiallyVaccinated: _xEMPTYx10
+          partiallyVaccinatedPerCapita: _xEMPTYx11
+          partiallyVaccinatedProportionOfTown: _xEMPTYx12
+        }
+      }
     }
   `)
 
