@@ -67,6 +67,8 @@ class GlobalStore {
 
   dataTypes = DATA_TYPES
 
+  vaccinations = {}
+
   setTownCounts = (counts = []) => {
     this.townCounts = counts.reduce((final, current) => {
       final[current.town] = current
@@ -137,9 +139,15 @@ const initializedGlobalStore = new GlobalStore()
 
 const storeContext = React.createContext(initializedGlobalStore)
 
-export const GlobalStoreProvider = ({ initialTown, townCounts, children }) => {
+export const GlobalStoreProvider = ({
+  initialTown,
+  townCounts,
+  vaccinations,
+  children,
+}) => {
   initializedGlobalStore.availableTowns = Object.values(townCounts)
   initializedGlobalStore.townCounts = townCounts
+  initializedGlobalStore.vaccinations = vaccinations
 
   if (initialTown) {
     initializedGlobalStore.selectedTowns = [
