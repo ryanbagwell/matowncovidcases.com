@@ -17,6 +17,14 @@ const formatCaseCountNumber = n => {
   return n.replace(/[,]/gi, "")
 }
 
+const trimAndParseInt = str => {
+  try {
+    return parseInt(str.trim().replace(",", ""))
+  } catch (err) {
+    return 0
+  }
+}
+
 const parseReportDate = memoize(dateStr => {
   return parse(dateStr, "M/d/yy", new Date())
 })
@@ -297,6 +305,46 @@ exports.createPages = async ({ graphql, actions }) => {
     })
   })
 
+  const vaccinations = results.data.vaccinations.nodes.reduce(
+    (final, current) => {
+      const {
+        town,
+        ageGroup,
+        population,
+        fullyVaccinated,
+        partiallyVaccinated,
+      } = current
+
+      if (town === "Town") return final
+
+      let color = "black"
+      try {
+        color = allNormalized[town].color
+      } catch (err) {}
+
+      final[town] = final[town] || {
+        townName: town,
+        color: color,
+        totalEligible: 0,
+        totalFullyVaccinated: 0,
+        totalPartiallyVaccinated: 0,
+      }
+
+      if (ageGroup !== "Total") {
+        final[town].totalEligible =
+          final[town].totalEligible + trimAndParseInt(population)
+        final[town].totalFullyVaccinated =
+          final[town].totalFullyVaccinated + trimAndParseInt(fullyVaccinated)
+        final[town].totalPartiallyVaccinated =
+          final[town].totalPartiallyVaccinated +
+          trimAndParseInt(partiallyVaccinated)
+      }
+
+      return final
+    },
+    {}
+  )
+
   const productTemplate = path.resolve(`src/templates/index.js`)
 
   createPage({
@@ -304,19 +352,21 @@ exports.createPages = async ({ graphql, actions }) => {
     component: productTemplate,
     context: {
       townCounts: allNormalized,
+      vaccinations,
     },
   })
 
-  //if (process.env.NODE_ENV === "production") {
-  Object.keys(populations).map(townName => {
-    createPage({
-      path: `/${slugify(townName, { lower: true })}/`,
-      component: productTemplate,
-      context: {
-        townCounts: allNormalized,
-        townName: townName,
-      },
+  if (process.env.NODE_ENV === "production") {
+    Object.keys(populations).map(townName => {
+      createPage({
+        path: `/${slugify(townName, { lower: true })}/`,
+        component: productTemplate,
+        context: {
+          townCounts: allNormalized,
+          townName: townName,
+          vaccinations,
+        },
+      })
     })
-  })
-  //}
+  }
 }

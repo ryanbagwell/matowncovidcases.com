@@ -6,6 +6,7 @@ export const wrapPageElement = ({ element, props }) => {
     <GlobalStoreProvider
       initialTown={props.pageContext.townName || ""}
       townCounts={props.pageContext.townCounts || []}
+      vaccinations={props.pageContext.vaccinations || []}
     >
       {element}
     </GlobalStoreProvider>
