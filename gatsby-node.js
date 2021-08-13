@@ -275,6 +275,7 @@ exports.createPages = async ({ graphql, actions }) => {
 
   allNormalized["State"] = {
     town: "State",
+    color: randomColor(0.99, 0.99).hexString(),
     counts: Object.entries(dailyTotals).map(
       ([Report_Date, Total_Case_Count]) => {
         return getNormalizedCount("State", Report_Date, Total_Case_Count)
