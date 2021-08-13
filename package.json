@@ -53,10 +53,11 @@
     "build": "GATSBY_EXPERIMENTAL_PAGE_BUILD_ON_DATA_CHANGES=true gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-      "serve": "gatsby serve",
+    "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
-    "deploy": "aws s3 sync ./public s3://$S3_BUCKET_NAME/"
+    "deploy": "aws s3 sync ./public s3://$S3_BUCKET_NAME/",
+    "invalidate-cloudfront": "aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths \"/*\""
   },
   "repository": {
     "type": "git",
