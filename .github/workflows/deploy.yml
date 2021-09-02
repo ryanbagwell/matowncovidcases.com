@@ -29,17 +29,17 @@ jobs:
           key: ${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}-${{ github.ref}}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('yarn.lock') }}-
-      - name: Cache gatsby output modules
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-gatsby
-        with:
-          path: |
-            ./.cache
-            ./public
-          key: ${{ env.cache-name }}-${{ github.ref }}-${{ steps.date.outputs.date }}
-          restore-keys: |
-            ${{ env.cache-name }}-${{ github.ref }}-
+      # - name: Cache gatsby output modules
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-gatsby
+      #   with:
+      #     path: |
+      #       ./.cache
+      #       ./public
+      #     key: ${{ env.cache-name }}-${{ github.ref }}-${{ steps.date.outputs.date }}
+      #     restore-keys: |
+      #       ${{ env.cache-name }}-${{ github.ref }}-
       - name: Install dependencies
         run: yarn install
       - name: Build site
