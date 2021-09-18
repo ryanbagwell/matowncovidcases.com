@@ -63,10 +63,10 @@ export default observer(props => {
 
   const options = {
     annotations: {
-      // yaxis:
-      //   selectedDataTypes === "changePer100k"
-      //     ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
-      //     : [],
+      yaxis:
+        selectedDataTypes === "changePer100k"
+          ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
+          : [],
       // xaxis: [
       //   {
       //     x: "5/6/20",
