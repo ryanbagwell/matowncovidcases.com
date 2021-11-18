@@ -7,6 +7,8 @@ const sub = require("date-fns/sub")
 
 let suppliedUrl = process.argv[2]
 
+let offset = 0
+
 const getCasesDownloadUrl = (offset = 0) => {
   if (suppliedUrl) return suppliedUrl
 
@@ -35,37 +37,34 @@ const getVaccineDownloadUrl = (offset = 0) => {
   return url
 }
 
-;(async function runIt() {
-  let offset = 0
+const saveIt = (data, filename) => {
+  process.stdout.write(`Saving file ...`)
+  fs.writeFileSync(path.join(__dirname, filename), data, "binary")
+}
 
-  const saveIt = (data, filename) => {
-    fs.writeFileSync(path.join(__dirname, filename), data, "binary")
-  }
-
-  const getIt = async url => {
+const doItUntilSuccess = async (urlFunction, filename) => {
+  try {
+    const url = urlFunction(offset)
     process.stdout.write(`Trying to download from ${url}\n`)
-
-    return await axios
+    const response = await axios
       .get(url, {
         responseType: "arraybuffer",
-      })
-      .catch(err => {
-        throw err
-      })
-  }
-
-  const doItUntilSuccess = async (urlFunction, filename) => {
-    try {
-      const url = urlFunction(offset)
-      const response = await getIt(url)
-      saveIt(response.data, filename)
-      process.stdout.write("Done!\n")
-    } catch (err) {
-      offset++
-      process.stdout.write("Error. Going back a day ...\n")
-      doItUntilSuccess(urlFunction, filename)
+      });
+    saveIt(response.data, filename)
+    process.stdout.write("Done!\n")
+  } catch (err) {
+    offset++
+    if (err.response) {
+      process.stdout.write(`${err.toString()} Going back a day ...\n`)
+    } else {
+      process.stdout.write(err.toString())
     }
+    await doItUntilSuccess(urlFunction, filename)
   }
+}
+
+
+;(async function runIt() {
 
   await doItUntilSuccess(
     getCasesDownloadUrl,
