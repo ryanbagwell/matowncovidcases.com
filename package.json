@@ -10,6 +10,7 @@
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "4.0.0-alpha.56",
     "apexcharts": "3.27.3",
+    "axios": "0.24.0",
     "date-fns": "2.22.1",
     "fontsource-roboto": "2.1.4",
     "gatsby": "2.27.2",
