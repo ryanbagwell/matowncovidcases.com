@@ -189,7 +189,7 @@ exports.createPages = async ({ graphql, actions }) => {
           town: _xEMPTY
           ageGroup: _xEMPTYx1
           population: _xEMPTYx2
-          populationOfTownPopulation: _xEMPTYx3
+          proportionOfTownPopulation: _xEMPTYx3
           oneDose: _xEMPTYx4
           oneDosePerCapita: _xEMPTYx5
           oneDoseProporationOfTown: _xEMPTYx6
@@ -309,11 +309,7 @@ exports.createPages = async ({ graphql, actions }) => {
   const vaccinations = results.data.vaccinations.nodes.reduce(
     (final, current) => {
       const {
-        town,
-        ageGroup,
-        population,
-        fullyVaccinated,
-        partiallyVaccinated,
+        town
       } = current
 
       if (town === "Town") return final
@@ -323,23 +319,9 @@ exports.createPages = async ({ graphql, actions }) => {
         color = allNormalized[town].color
       } catch (err) {}
 
-      final[town] = final[town] || {
-        townName: town,
-        color: color,
-        totalEligible: 0,
-        totalFullyVaccinated: 0,
-        totalPartiallyVaccinated: 0,
-      }
+      final[town] = final[town] || []
 
-      if (ageGroup !== "Total") {
-        final[town].totalEligible =
-          final[town].totalEligible + trimAndParseInt(population)
-        final[town].totalFullyVaccinated =
-          final[town].totalFullyVaccinated + trimAndParseInt(fullyVaccinated)
-        final[town].totalPartiallyVaccinated =
-          final[town].totalPartiallyVaccinated +
-          trimAndParseInt(partiallyVaccinated)
-      }
+      final[town].push(current)
 
       return final
     },
