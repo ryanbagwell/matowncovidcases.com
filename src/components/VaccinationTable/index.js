@@ -11,10 +11,11 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import { observer } from "mobx-react"
 import { useStore } from "../../stores/global"
+import getColor from '../../utils/getColor';
 
 
 const TownRows = (props) => {
-  const {townVaccinations} = props;
+  const {townVaccinations, color} = props;
   const [open, setOpen] = useState(false);
 
   const vaccinations = townVaccinations.sort((a, b) => {
@@ -26,8 +27,6 @@ const TownRows = (props) => {
     }
     return 0
   })
-
-  const color = 'black'
 
   return (
     <React.Fragment>
@@ -76,10 +75,6 @@ export default observer(props => {
 
   }, [selectedTownsStr, vaccinations, selectedTowns])
 
-  console.log(towns)
-  const color = 'black'
-  //return null
-
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -94,9 +89,13 @@ export default observer(props => {
         </TableHead>
         <TableBody>
           {towns.map(
-            (townVaccinations) => (
-              <TownRows townVaccinations={townVaccinations} key={townVaccinations[0].town} />
-            )
+            (townVaccinations, i) => {
+              return townVaccinations && (<TownRows
+                townVaccinations={townVaccinations}
+                key={townVaccinations[0].town}
+                color={getColor(i)} />
+              )
+            }
           )}
         </TableBody>
       </Table>

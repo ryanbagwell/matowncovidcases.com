@@ -4,7 +4,6 @@ const getTime = require("date-fns/getTime")
 const formatDate = require("date-fns/format")
 const populations = require("./src/utils/populations")
 const slugify = require("slugify")
-const randomColor = require("random-color")
 const memoize = require("memoize-one")
 
 const cleanupTownName = t => {
@@ -57,7 +56,7 @@ function getCountsByTown(nodes = []) {
 
       final[name] = final[name] || {
         town: name,
-        color: randomColor(0.99, 0.99).hexString(),
+        color: 'black',
         counts: [],
       }
 
@@ -275,7 +274,7 @@ exports.createPages = async ({ graphql, actions }) => {
 
   allNormalized["State"] = {
     town: "State",
-    color: randomColor(0.99, 0.99).hexString(),
+    color: 'black',
     counts: Object.entries(dailyTotals).map(
       ([Report_Date, Total_Case_Count]) => {
         return getNormalizedCount("State", Report_Date, Total_Case_Count)

@@ -3,6 +3,7 @@ import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
 import Chart from "react-apexcharts/src/react-apexcharts"
 import Box from "@material-ui/core/Box"
+import getColor from '../../utils/getColor';
 
 const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
   y: 50,
@@ -24,7 +25,7 @@ const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
 export default observer(props => {
   const { townCounts, selectedDataTypes, selectedTowns } = useStore()
 
-  const series = selectedTowns.reduce((final, current) => {
+  const series = selectedTowns.reduce((final, current, i) => {
     const { town: townName, color, counts } = current
 
     if (!counts || !selectedDataTypes) return final
@@ -38,7 +39,7 @@ export default observer(props => {
         name: `${townName} - ${dt.title}`,
         data: finalCounts.slice(1),
         townName,
-        color,
+        color: getColor(i),
         config: dt,
       })
     })
