@@ -54,13 +54,35 @@ export default observer(props => {
     return items.slice(1)
   }, [selectedTowns, townCounts])
 
-  const yAxisLabel = useMemo(() => {
-    try {
-      return selectedDataTypes[0].verboseTitle
-    } catch (err) {
-      return ""
+  const getYAxis = () => {
+    let ret = [];
+
+    if (selectedDataTypes.length >= 1) {
+      ret.push({
+        title: {
+          text: selectedDataTypes[0].verboseTitle,
+          trim: true,
+        }
+      })
     }
-  }, [selectedDataTypes])
+
+    if (selectedDataTypes.length >= 2) {
+      ret.push({
+        title: {
+          text: selectedDataTypes[1].verboseTitle,
+          trim: true,
+
+        },
+        opposite: true,
+        axisTicks: {
+          show: true
+        },
+      })
+    }
+
+    return ret;
+
+  }
 
   const options = {
     annotations: {
@@ -114,12 +136,7 @@ export default observer(props => {
         rotateAlways: false,
       },
     },
-    yaxis: {
-      title: {
-        text: yAxisLabel,
-        trim: true,
-      },
-    },
+    yaxis: getYAxis(),
     legend: {
       customLegendItems: series.reduce((final, current) => {
         final.push(final.indexOf(current.townName) > -1 ? "" : current.townName)

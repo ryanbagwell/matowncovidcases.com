@@ -32,13 +32,15 @@ function getNormalizedCount(City_Town, Report_Date, Total_Case_Count) {
   const d = parseReportDate(Report_Date)
   const ts = getTime(d)
 
+  const total = isNaN(Total_Case_Count) ? 0 : parseInt(Total_Case_Count)
+
   return {
     dateStr: Report_Date,
     shortDateStr: formatDate(d, "M/d/yy"),
     weekNumber: formatDate(d, "I"),
     year: formatDate(d, "yy"),
     timestamp: ts,
-    totalCount: isNaN(Total_Case_Count) ? 0 : parseInt(Total_Case_Count),
+    totalCount: total < 0 ? 0 : total,
   }
 }
 
@@ -98,13 +100,19 @@ exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
   const results = await graphql(`
     query {
-      allSy2021CsvSheet1 {
+      allSchoolsCsvSheet1 {
         nodes {
           Report_Date
           Code
           City_Town: Name
           Students
           Staff
+        }
+      }
+      allSy21EnrollmentsCsvSheet1 {
+        nodes {
+          name: District_Name
+          enrollment: Total_Enrollment
         }
       }
       allData4222020Through5202020CsvSheet1 {
@@ -211,15 +219,26 @@ exports.createPages = async ({ graphql, actions }) => {
     results.data.allLatestXlsxWeeklyCityTown.nodes,
   ])
 
+  const schoolEnrollments = results.data.allSy21EnrollmentsCsvSheet1.nodes.reduce((final, {name, enrollment}) => {
+    final[name] = enrollment || 0;
+    return final
+  }, {})
+
   /* Organize the flattened list of school counts by Town and Date
     so it's easier to look up. */
-  const schoolCountsByTown = results.data.allSy2021CsvSheet1.nodes.reduce(
+  const schoolCountsByTown = results.data.allSchoolsCsvSheet1.nodes.reduce(
     (final, { Report_Date, Code, City_Town, Students, Staff }) => {
       const name = cleanupTownName(City_Town || "Unknown Town")
 
       const d = parseReportDate(Report_Date)
       const year = formatDate(d, "yy")
       const weekNumber = formatDate(d, "I")
+
+      let enrollment = 0;
+
+      try {
+        parseInt(enrollment = schoolEnrollments[name])
+      } catch (err) {};
 
       final[name] = final[name] || {}
       final[name][year] = final[name][year] || {}
@@ -228,6 +247,8 @@ exports.createPages = async ({ graphql, actions }) => {
         [weekNumber]: {
           students: Students,
           staff: Staff,
+          studentsPer10000Students: (Students * 10000 / enrollment) || 0,
+          staffPer10000Students: (Staff * 10000 / enrollment) || 0,
         },
       }
 
@@ -251,12 +272,16 @@ exports.createPages = async ({ graphql, actions }) => {
             ? parseInt(schoolCount.students)
             : 0,
           newStaffCases: schoolCount.staff ? parseInt(schoolCount.staff) : 0,
+          newStudentCasesPerTenThousand: schoolCount.studentsPer10000Students ? parseFloat(schoolCount.studentsPer10000Students.toFixed(1)) : 0,
+          newStaffCasesPerTenThousand: schoolCount.staffPer10000Students ? parseFloat(schoolCount.staffPer10000Students.toFixed(1)) : 0,
         }
       } catch (err) {
         allNormalized[townName].counts[i] = {
           ...count,
           newStudentCases: 0,
           newStaffCases: 0,
+          newStudentCasesPerTenThousand: 0.0,
+          newStaffCasesPerTenThousand: 0.0,
         }
       }
     })

@@ -54,6 +54,24 @@ const DATA_TYPES = [
       dashArray: 8,
     },
   },
+  {
+    title: "School student cases per 10k enrolled",
+    verboseTitle: "New student cases reported per 10k enrolled",
+    name: "newStudentCasesPerTenThousand",
+    lineStyle: {
+      width: 2,
+      dashArray: 10,
+    },
+  },
+  {
+    title: "School staff cases per 10k enrolled",
+    verboseTitle: "New staff cases reported per 10k enrolled",
+    name: "newStaffCasesPerTenThousand",
+    lineStyle: {
+      width: 2,
+      dashArray: 12,
+    },
+  },
 ]
 
 class GlobalStore {
