@@ -57,7 +57,7 @@ const DATA_TYPES = [
   {
     title: "School student cases per 100k enrolled",
     verboseTitle: "New student cases reported per 100k enrolled",
-    name: "newStudentCasesPerTenThousand",
+    name: "newStudentCasesPerHundredThousand",
     lineStyle: {
       width: 2,
       dashArray: 10,
@@ -66,7 +66,7 @@ const DATA_TYPES = [
   {
     title: "School staff cases per 100k enrolled",
     verboseTitle: "New staff cases reported per 100k enrolled",
-    name: "newStaffCasesPerTenThousand",
+    name: "newStaffCasesPerHundredThousand",
     lineStyle: {
       width: 2,
       dashArray: 12,

@@ -240,6 +240,9 @@ exports.createPages = async ({ graphql, actions }) => {
         parseInt(enrollment = schoolEnrollments[name])
       } catch (err) {};
 
+      const studentRate = Students * 100000 / enrollment;
+      const staffRate = Staff * 100000 / enrollment;
+
       final[name] = final[name] || {}
       final[name][year] = final[name][year] || {}
       final[name][year] = {
@@ -247,8 +250,8 @@ exports.createPages = async ({ graphql, actions }) => {
         [weekNumber]: {
           students: Students,
           staff: Staff,
-          studentsPer100000Students: (Students * 100000 / enrollment) || 0,
-          staffPer100000Students: (Staff * 100000 / enrollment) || 0,
+          studentsPer100000Students: isNaN(studentRate) ? 0 : studentRate,
+          staffPer100000Students: isNaN(staffRate) ? 0 : staffRate,
         },
       }
 
@@ -263,6 +266,10 @@ exports.createPages = async ({ graphql, actions }) => {
       const d = parseReportDate(count.dateStr)
       const year = formatDate(d, "yy")
 
+      const decimalPlaces = (num) => {
+        return parseFloat(parseFloat(num).toFixed(1))
+      }
+
       try {
         const schoolCount = schoolCountsByTown[townName][year][count.weekNumber]
 
@@ -272,16 +279,16 @@ exports.createPages = async ({ graphql, actions }) => {
             ? parseInt(schoolCount.students)
             : 0,
           newStaffCases: schoolCount.staff ? parseInt(schoolCount.staff) : 0,
-          newStudentCasesPerHundredThousand: schoolCount.studentsPer100000Students ? parseFloat(schoolCount.studentsPer100000Students.toFixed(1)) : 0,
-          newStaffCasesPerHundredThousand: schoolCount.staffPer100000Students ? parseFloat(schoolCount.staffPer100000Students.toFixed(1)) : 0,
+          newStudentCasesPerHundredThousand: schoolCount.studentsPer100000Students ? decimalPlaces(schoolCount.studentsPer100000Students) : 0,
+          newStaffCasesPerHundredThousand: schoolCount.staffPer100000Students ? decimalPlaces(schoolCount.staffPer100000Students) : 0,
         }
       } catch (err) {
         allNormalized[townName].counts[i] = {
           ...count,
           newStudentCases: 0,
           newStaffCases: 0,
-          newStudentCasesPerTenThousand: 0.0,
-          newStaffCasesPerTenThousand: 0.0,
+          newStudentCasesPerHundredThousand: 0.0,
+          newStaffCasesPerHundredThousand: 0.0,
         }
       }
     })
