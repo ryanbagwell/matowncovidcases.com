@@ -247,8 +247,8 @@ exports.createPages = async ({ graphql, actions }) => {
         [weekNumber]: {
           students: Students,
           staff: Staff,
-          studentsPer10000Students: (Students * 10000 / enrollment) || 0,
-          staffPer10000Students: (Staff * 10000 / enrollment) || 0,
+          studentsPer100000Students: (Students * 100000 / enrollment) || 0,
+          staffPer100000Students: (Staff * 100000 / enrollment) || 0,
         },
       }
 
@@ -272,8 +272,8 @@ exports.createPages = async ({ graphql, actions }) => {
             ? parseInt(schoolCount.students)
             : 0,
           newStaffCases: schoolCount.staff ? parseInt(schoolCount.staff) : 0,
-          newStudentCasesPerTenThousand: schoolCount.studentsPer10000Students ? parseFloat(schoolCount.studentsPer10000Students.toFixed(1)) : 0,
-          newStaffCasesPerTenThousand: schoolCount.staffPer10000Students ? parseFloat(schoolCount.staffPer10000Students.toFixed(1)) : 0,
+          newStudentCasesPerHundredThousand: schoolCount.studentsPer100000Students ? parseFloat(schoolCount.studentsPer100000Students.toFixed(1)) : 0,
+          newStaffCasesPerHundredThousand: schoolCount.staffPer100000Students ? parseFloat(schoolCount.staffPer100000Students.toFixed(1)) : 0,
         }
       } catch (err) {
         allNormalized[townName].counts[i] = {
@@ -318,7 +318,10 @@ exports.createPages = async ({ graphql, actions }) => {
         count.changeSinceLastCount = 0
         return
       }
-      const change = count.totalCount - counts[i - 1].totalCount
+      let change = count.totalCount - counts[i - 1].totalCount
+      if (change < 0) {
+        change = 0;
+      }
       counts[i] = {
         ...count,
         changeSinceLastCount: change,
