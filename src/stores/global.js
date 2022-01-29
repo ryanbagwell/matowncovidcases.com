@@ -74,6 +74,41 @@ const DATA_TYPES = [
   },
 ]
 
+const MILESTONES = {
+  'Somerville': [
+    {
+      date: "8/26/21",
+      text: "Masks requried inside",
+    }
+  ],
+  'Boston': [
+    {
+      date: "9/2/21",
+      text: "Masks required inside",
+    }
+  ],
+  'Melrose': [
+    {
+      date: "1/6/22",
+      text: 'Masks required inside',
+    }
+  ],
+  'State': [
+    {
+      date: "5/6/20",
+      text: 'Masks required inside',
+    },
+    {
+      date: "11/6/20",
+      text: 'Masks required inside and outside',
+    },
+    {
+      date: "6/3/21",
+      text: 'Mask mandate lifted',
+    },
+  ]
+}
+
 class GlobalStore {
   townCounts = {}
 
@@ -86,6 +121,10 @@ class GlobalStore {
   dataTypes = DATA_TYPES
 
   vaccinations = {}
+
+  showMilestones = false
+
+  townMilestones = MILESTONES
 
   setTownCounts = (counts = []) => {
     this.townCounts = counts.reduce((final, current) => {
@@ -137,6 +176,10 @@ class GlobalStore {
   getDataTypeByName = memoize(typeName => {
     return this.dataTypes.find(({ name }) => name === typeName)
   })
+
+  setShowMilestones = (show) => {
+    this.showMilestones = show
+  }
 }
 
 decorate(GlobalStore, {
@@ -144,6 +187,7 @@ decorate(GlobalStore, {
   selectedTowns: observable,
   availableTowns: observable,
   selectedDataTypes: observable,
+  showMilestones: observable,
   setAvailableTowns: action,
   addSelectedTown: action,
   removeSelectedTown: action,
@@ -151,6 +195,7 @@ decorate(GlobalStore, {
   getTownData: action,
   addSelectedDataTypes: action,
   removeSelectedDataType: action,
+  setShowMilestones: action,
 })
 
 const initializedGlobalStore = new GlobalStore()

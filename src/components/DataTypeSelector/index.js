@@ -13,6 +13,8 @@ export default observer(props => {
     dataTypes,
     addSelectedDataType,
     removeSelectedDataType,
+    setShowMilestones,
+    showMilestones
   } = useStore()
 
   return (
@@ -54,6 +56,24 @@ export default observer(props => {
           />
         )
       })}
+      <FormControlLabel
+        key="milestones-key"
+        control={
+          <Checkbox
+            checked={showMilestones}
+            onChange={e => {
+              if (e.currentTarget.checked) {
+                setShowMilestones(true)
+              } else {
+                setShowMilestones(false)
+              }
+            }}
+            name="milestones"
+            color="primary"
+          />
+        }
+        label="Show Milestones"
+      />
     </Paper>
   )
 })

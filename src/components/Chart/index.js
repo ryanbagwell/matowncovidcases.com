@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { useMemo, useState, useEffect } from "react"
 import { useStore } from "../../stores/global"
 import { observer } from "mobx-react"
 import Chart from "react-apexcharts/src/react-apexcharts"
@@ -23,7 +23,10 @@ const CDC_INDOOR_MASK_THRESHOLD_ANNOTATION = {
 }
 
 export default observer(props => {
-  const { townCounts, selectedDataTypes, selectedTowns } = useStore()
+  const {
+    townCounts, selectedDataTypes,
+    selectedTowns, showMilestones, townMilestones
+  } = useStore()
 
   const series = selectedTowns.reduce((final, current, i) => {
     const { town: townName, color, counts } = current
@@ -84,50 +87,35 @@ export default observer(props => {
 
   }
 
+  const xAnnotations = selectedTowns.reduce((final, current) => {
+    const {town: townName, color} = current;
+
+    const selectedMilestones = townMilestones[townName] || [];
+
+    for (const m of Object.values(selectedMilestones)) {
+      final.push({
+        x: m.date,
+        strokeDashArray: 0,
+        label: {
+          text: `${townName} - ${m.text}`,
+          borderColor: "#775DD0",
+          style: {
+            color: "#fff",
+            background: "#775DD0",
+          },
+        },
+      })
+    }
+    return final;
+  }, [])
+
   const options = {
     annotations: {
       yaxis:
         selectedDataTypes === "changePer100k"
           ? [CDC_INDOOR_MASK_THRESHOLD_ANNOTATION]
           : [],
-      // xaxis: [
-      //   {
-      //     x: "5/6/20",
-      //     strokeDashArray: 0,
-      //     label: {
-      //       text: "Masks required inside",
-      //       borderColor: "#775DD0",
-      //       style: {
-      //         color: "#fff",
-      //         background: "#775DD0",
-      //       },
-      //     },
-      //   },
-      //   {
-      //     x: "11/6/20",
-      //     strokeDashArray: 0,
-      //     label: {
-      //       text: "Masks required outside",
-      //       borderColor: "#775DD0",
-      //       style: {
-      //         color: "#fff",
-      //         background: "#775DD0",
-      //       },
-      //     },
-      //   },
-      //   {
-      //     x: "6/3/21",
-      //     strokeDashArray: 0,
-      //     label: {
-      //       text: "Mask mandate lifted",
-      //       borderColor: "#775DD0",
-      //       style: {
-      //         color: "#fff",
-      //         background: "#775DD0",
-      //       },
-      //     },
-      //   },
-      // ],
+      xaxis: showMilestones ? xAnnotations : [],
     },
     xaxis: {
       categories: xAxisLabels,
@@ -160,7 +148,7 @@ export default observer(props => {
     colors: series.map(s => s.color),
     chart: {
       toolbar: {
-        show: false,
+        show: true,
         tools: {
           zoom: true,
           zoomin: true,

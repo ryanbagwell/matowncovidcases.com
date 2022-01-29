@@ -80,32 +80,6 @@ export default observer(props => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <DataTypeSelector />
-          {/* <FormControl
-            variant="outlined"
-            style={{
-              marginTop: 20,
-            }}
-          >
-            <InputLabel id="demo-simple-select-outlined-label">
-              Data to Show:
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label"
-              value={selectedDataType}
-              autoWidth={true}
-              labelWidth={50}
-              onChange={e => {
-                setSelectedDataType(e.target.value)
-              }}
-              label="Data to Show"
-            >
-              {dataTypes.map(({ title, name }) => (
-                <MenuItem value={name} key={name}>
-                  {title}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
         </Grid>
       </Grid>
     </>
