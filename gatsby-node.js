@@ -191,7 +191,7 @@ exports.createPages = async ({ graphql, actions }) => {
           Average_Daily_Rate
         }
       }
-      vaccinations: allVaccinationsXlsxAgeMuncipality {
+      vaccinations: allVaccinationsXlsxAgeMunicipality {
         nodes {
           town: _xEMPTY
           ageGroup: _xEMPTYx1
