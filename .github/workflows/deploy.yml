@@ -1,6 +1,8 @@
 name: Build and Deploy
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 10,11 * * 4" # Run at 6 and 7 pm every Thuesday Eastern Time (cron is in UTC)
   push:
     branches:
       - master
